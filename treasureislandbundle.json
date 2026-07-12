@@ -1,0 +1,61 @@
+{
+    "bundle_id": "bf33be36-3dd6-4015-8f41-908e764f387b",
+    "source": "local",
+    "meta": {
+        "created_at": "2026-06-21T23:07:10.452228",
+        "version": "1.2",
+        "name": "treasureislandbundle"
+    },
+    "strategy_config": {
+        "strategy_name": "ti1, ti2",
+        "progression_type": "fibonacci",
+        "k_value": "2",
+        "rotation_list_str": "ti1:fibonacci|base_bet=0.1|session_length=8,ti2:fibonacci|base_bet=0.1|session_length=8",
+        "rotation_mode": "sequential",
+        "rotation_trigger": "session_end",
+        "switch_after_n_losses": 1,
+        "carry_progression_on_switch": true,
+        "reset_rotation_on_session": false,
+        "rotation_progression_override": true,
+        "filter_by_regime": false,
+        "selection_mode": "parallel",
+        "triggers": {},
+        "global_trigger": {
+            "type": "always"
+        },
+        "tiebreaker": "coldest",
+        "fallback": "skip_round"
+    },
+    "betting_config": {
+        "base_bet": 0.1,
+        "max_loss": 0.0,
+        "max_bet": 1000.0,
+        "session_duration": 8,
+        "num_sessions": 1000,
+        "min_gap_minutes": 0,
+        "max_gap_minutes": 1,
+        "profit_target": 0.0,
+        "enable_trailing_stop": false,
+        "trailing_stop_amount": 0.0,
+        "session_ext_after_win": false,
+        "session_ext_at_high": true,
+        "max_extension_rounds": 20,
+        "extension_give_up_amount": 50.0,
+        "enable_global_stop": false,
+        "global_profit_stop": 0.0,
+        "global_stop_loss": 0.0,
+        "observation_trigger": 0,
+        "max_consec_losses": 5,
+        "enable_escalation_on_loss": false,
+        "escalation_multiplier": 2.0,
+        "escalation_max_steps": 4,
+        "escalation_per_step": ""
+    },
+    "dynamic_rules": [
+        {
+            "on": "win",
+            "action": "reset_to_base"
+        }
+    ],
+    "name": "treasureislandbundle"
+}

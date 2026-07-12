@@ -1,0 +1,302 @@
+[
+    {
+        "round": 1,
+        "strategy": "romanvski1",
+        "spin_result": 10,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 250.1
+    },
+    {
+        "round": 2,
+        "strategy": "romanvski1",
+        "spin_result": 22,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 250.2
+    },
+    {
+        "round": 3,
+        "strategy": "romanvski1",
+        "spin_result": 21,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 250.29999999999998
+    },
+    {
+        "round": 4,
+        "strategy": "romanvski1",
+        "spin_result": 34,
+        "bet_amount": 0.1,
+        "result": "LOSS",
+        "payout": 0.0,
+        "pnl": -0.8,
+        "balance_after": 249.49999999999997
+    },
+    {
+        "round": 5,
+        "strategy": "romanvski1",
+        "spin_result": 27,
+        "bet_amount": 0.2,
+        "result": "LOSS",
+        "payout": 0.0,
+        "pnl": -1.6,
+        "balance_after": 247.89999999999998
+    },
+    {
+        "round": 6,
+        "strategy": "romanvski1",
+        "spin_result": 18,
+        "bet_amount": 0.30000000000000004,
+        "result": "WIN",
+        "payout": 2.7,
+        "pnl": 0.2999999999999998,
+        "balance_after": 248.2
+    },
+    {
+        "round": 7,
+        "strategy": "romanvski1",
+        "spin_result": 19,
+        "bet_amount": 0.20000000000000004,
+        "result": "WIN",
+        "payout": 1.8000000000000003,
+        "pnl": 0.19999999999999996,
+        "balance_after": 248.39999999999998
+    },
+    {
+        "round": 8,
+        "strategy": "romanvski1",
+        "spin_result": 24,
+        "bet_amount": 0.10000000000000003,
+        "result": "WIN",
+        "payout": 0.9000000000000004,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.49999999999997
+    },
+    {
+        "round": 9,
+        "strategy": "romanvski1",
+        "spin_result": 8,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.59999999999997
+    },
+    {
+        "round": 10,
+        "strategy": "romanvski1",
+        "spin_result": 16,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.69999999999996
+    },
+    {
+        "round": 11,
+        "strategy": "romanvski1",
+        "spin_result": 19,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.79999999999995
+    },
+    {
+        "round": 12,
+        "strategy": "romanvski1",
+        "spin_result": 27,
+        "bet_amount": 0.1,
+        "result": "LOSS",
+        "payout": 0.0,
+        "pnl": -0.8,
+        "balance_after": 247.99999999999994
+    },
+    {
+        "round": 13,
+        "strategy": "romanvski1",
+        "spin_result": 28,
+        "bet_amount": 0.2,
+        "result": "WIN",
+        "payout": 1.8,
+        "pnl": 0.19999999999999996,
+        "balance_after": 248.19999999999993
+    },
+    {
+        "round": 14,
+        "strategy": "romanvski1",
+        "spin_result": 5,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.29999999999993
+    },
+    {
+        "round": 15,
+        "strategy": "romanvski1",
+        "spin_result": 4,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.39999999999992
+    },
+    {
+        "round": 16,
+        "strategy": "romanvski1",
+        "spin_result": 10,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.49999999999991
+    },
+    {
+        "round": 17,
+        "strategy": "romanvski1",
+        "spin_result": 26,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9,
+        "pnl": 0.09999999999999998,
+        "balance_after": 248.5999999999999
+    },
+    {
+        "round": 18,
+        "strategy": "romanvski1",
+        "spin_result": 11,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.6999999999999
+    },
+    {
+        "round": 19,
+        "strategy": "romanvski1",
+        "spin_result": 14,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.7999999999999
+    },
+    {
+        "round": 20,
+        "strategy": "romanvski1",
+        "spin_result": 26,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9,
+        "pnl": 0.09999999999999998,
+        "balance_after": 248.8999999999999
+    },
+    {
+        "round": 21,
+        "strategy": "romanvski1",
+        "spin_result": 5,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.9999999999999
+    },
+    {
+        "round": 22,
+        "strategy": "romanvski1",
+        "spin_result": 22,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 249.09999999999988
+    },
+    {
+        "round": 23,
+        "strategy": "romanvski1",
+        "spin_result": 23,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 249.19999999999987
+    },
+    {
+        "round": 24,
+        "strategy": "romanvski1",
+        "spin_result": 21,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 249.29999999999987
+    },
+    {
+        "round": 25,
+        "strategy": "romanvski1",
+        "spin_result": 34,
+        "bet_amount": 0.1,
+        "result": "LOSS",
+        "payout": 0.0,
+        "pnl": -0.8,
+        "balance_after": 248.49999999999986
+    },
+    {
+        "round": 26,
+        "strategy": "romanvski1",
+        "spin_result": 1,
+        "bet_amount": 0.2,
+        "result": "WIN",
+        "payout": 1.8000000000000003,
+        "pnl": 0.20000000000000018,
+        "balance_after": 248.69999999999985
+    },
+    {
+        "round": 27,
+        "strategy": "romanvski1",
+        "spin_result": 30,
+        "bet_amount": 0.1,
+        "result": "LOSS",
+        "payout": 0.0,
+        "pnl": -0.8,
+        "balance_after": 247.89999999999984
+    },
+    {
+        "round": 28,
+        "strategy": "romanvski1",
+        "spin_result": 25,
+        "bet_amount": 0.2,
+        "result": "WIN",
+        "payout": 1.8,
+        "pnl": 0.19999999999999996,
+        "balance_after": 248.09999999999982
+    },
+    {
+        "round": 29,
+        "strategy": "romanvski1",
+        "spin_result": 17,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.19999999999982
+    },
+    {
+        "round": 30,
+        "strategy": "romanvski1",
+        "spin_result": 22,
+        "bet_amount": 0.1,
+        "result": "WIN",
+        "payout": 0.9000000000000001,
+        "pnl": 0.10000000000000009,
+        "balance_after": 248.2999999999998
+    }
+]

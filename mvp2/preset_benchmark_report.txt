@@ -1,0 +1,69 @@
+BENCHMARK REPORT: CONSERVATIVE
+Source: c:\Users\Yash Thadani\Desktop\Engineering\spinedge\engine\mvp2\config\rotation_presets\conservative.json
+History: Last 100 real spins
+================================================================================
+RANK  | STRATEGY        | SCORE    | PnL (Flat)   | WIN RATE   | PRESET PROGRESSION
+--------------------------------------------------------------------------------
+* 1   | ds5             | 3.55     | -70.00       | 85.3     % | dynamic
+  2   | ds3             | 3.30     | -75.00       | 84.3     % | dynamic
+  3   | ds2             | 2.79     | -85.00       | 82.4     % | dynamic
+  4   | ds4             | 1.52     | -110.00      | 77.5     % | dynamic
+  5   | ds1             | 1.01     | -120.00      | 75.5     % | dynamic
+  6   | ds6             | -0.00    | -140.00      | 71.6     % | dynamic
+  7   | romanvski6      | -0.83    | -222.00      | 88.2     % | dynamic
+  8   | romanvski1      | -1.21    | -228.00      | 86.3     % | dynamic
+  9   | romanvski3      | -1.62    | -238.00      | 85.3     % | dynamic
+  10  | romanvski4      | -1.97    | -246.00      | 84.3     % | dynamic
+  11  | romanvski5      | -3.25    | -278.00      | 81.4     % | dynamic
+  12  | romanvski2      | -3.29    | -276.00      | 80.4     % | dynamic
+================================================================================
+
+DETAILED PRESET METADATA:
+- Strategy: romanvski1
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale;win:keep', 'condition=profit_below_session_high;win:reset_to_base', 'condition=profit_at_or_above_session_high']
+
+- Strategy: romanvski2
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale;win:keep', 'condition=profit_below_session_high;win:reset_to_base', 'condition=profit_at_or_above_session_high']
+
+- Strategy: romanvski3
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale;win:keep', 'condition=profit_below_session_high;win:reset_to_base', 'condition=profit_at_or_above_session_high']
+
+- Strategy: romanvski4
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale;win:keep', 'condition=profit_below_session_high;win:reset_to_base', 'condition=profit_at_or_above_session_high']
+
+- Strategy: ds1
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale']
+
+- Strategy: romanvski5
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale;win:keep', 'condition=profit_below_session_high;win:reset_to_base', 'condition=profit_at_or_above_session_high']
+
+- Strategy: romanvski6
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale;win:keep', 'condition=profit_below_session_high;win:reset_to_base', 'condition=profit_at_or_above_session_high']
+
+- Strategy: ds2
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale']
+
+- Strategy: ds3
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale']
+
+- Strategy: ds4
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale']
+
+- Strategy: ds5
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale']
+
+- Strategy: ds6
+  Progression: dynamic
+  Metadata: ['rules=loss:martingale']
+

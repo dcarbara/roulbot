@@ -1,0 +1,20 @@
+{
+    "meta": {
+        "created_at": "2026-01-25T17:19:38.908862",
+        "name": "222",
+        "version": "1.1"
+    },
+    "strategy_config": {
+        "strategy_name": "dynamic_9street",
+        "progression_type": "custom",
+        "k_value": "2",
+        "rotation_list_str": "romanvski1:dynamic|rules=loss:martingale;win:keep|condition=profit_below_session_high;win:reset_to_base|condition=profit_at_or_above_session_high,romanvski2:dynamic|rules=loss:martingale;win:keep|condition=profit_below_session_high;win:reset_to_base|condition=profit_at_or_above_session_high,romanvski3:dynamic|rules=loss:martingale;win:keep|condition=profit_below_session_high;win:reset_to_base|condition=profit_at_or_above_session_high,romanvski4:dynamic|rules=loss:martingale;win:keep|condition=profit_below_session_high;win:reset_to_base|condition=profit_at_or_above_session_high,ds1:dynamic|rules=loss:martingale,romanvski5:dynamic|rules=loss:martingale;win:keep|condition=profit_below_session_high;win:reset_to_base|condition=profit_at_or_above_session_high,romanvski6:dynamic|rules=loss:martingale;win:keep|condition=profit_below_session_high;win:reset_to_base|condition=profit_at_or_above_session_high,ds2:dynamic|rules=loss:martingale,ds3:dynamic|rules=loss:martingale,ds4:dynamic|rules=loss:martingale,ds5:dynamic|rules=loss:martingale,ds6:dynamic|rules=loss:martingale",
+        "rotation_mode": "random"
+    },
+    "betting_config": {
+        "base_bet": 1.0,
+        "max_loss": "2%",
+        "session_duration": 1
+    },
+    "dynamic_rules": []
+}

@@ -1,0 +1,81 @@
+import customtkinter as ctk
+import asyncio
+import tkinter as tk
+from PIL import Image, ImageTk
+from tkinter import ttk, messagebox, filedialog
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib
+import threading
+import time
+import random
+import json
+from datetime import datetime
+import logging
+import math
+
+# Internal modules
+from core.tesseract_ocr import initialize_ocr, extract_recent_numbers
+from automation.roulette_browser import RouletteBrowser
+from core.strategy_engine import StrategyEngine, ROULETTE_NUMBER_MAPPINGS, VALID_BET_TYPES
+from core.utils.coordinate_recorder import CoordinateRecorder
+from config.schema import load_config, save_config, get_license_tier
+from core.session_manager import SessionManager, StopReason
+from core.utils.db_utils import (
+    initialize_db, 
+    record_session, 
+    record_round_result, 
+    record_winning_numbers,
+    get_recent_sessions,
+    get_aggregate_stats,
+    get_recent_winning_numbers,
+    get_bankroll_trend,
+    clear_all_statistics
+)
+from gui.components.roulette_board import RouletteBoard
+from gui.components.tooltip import ToolTip
+
+# Check environment (Production vs Dev)
+try:
+    from core.telegram_bot import RouletteTelegramBot
+except ImportError:
+    RouletteTelegramBot = None
+import glob
+import os
+
+# Setup logging (already configured in main.py, but getting logger here)
+logger = logging.getLogger(__name__)
+
+# Constants (Moved from global scope if needed, or kep here)
+CHIP_MAP = {
+    100: "chip_100",
+    25: "chip_25",
+    5: "chip_5",
+    1: "chip_1",
+    0.5: "chip_.5",
+    0.1: "chip_.1",
+}
+CHIP_VALUES = sorted(CHIP_MAP.keys(), reverse=True)
+
+class RouletteBotGUI:
+    def __init__(self, root: ctk.CTk):
+        self.root = root
+        self.root.title("SpinEdge Premium")
+        # ... (rest of init)
+        
+        # Initialize SessionManager (will be re-instantiated per session)
+        self.session_manager = None 
+        
+        # ...
+
+    # ... (other methods)
+
+    def create_widgets(self):
+        # ... (existing UI code)
+        
+        # Add new inputs in the Session Extension section (around line 1270)
+        # We need to inject this into the existing extension_frame in create_widgets
+        
+        # ...
+
+    # We will use replacement tool to inject the specific UI parts

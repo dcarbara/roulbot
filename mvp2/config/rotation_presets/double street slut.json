@@ -1,0 +1,6 @@
+{
+    "bundle_id": "DS_SLUT",
+    "name": "double street slut",
+    "strategies_string": "ds1:dynamic|rules=loss:martingale,ds2:dynamic|rules=loss:martingale,ds3:dynamic|rules=loss:martingale,ds4:dynamic|rules=loss:martingale,ds5:dynamic|rules=loss:martingale,ds6:dynamic|rules=loss:martingale",
+    "created_at": "2026-01-25T17:33:31.549272"
+}

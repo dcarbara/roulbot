@@ -1,0 +1,19 @@
+{
+  "strategy_name": "S3",
+  "custom_strategies": {
+    "S3": ["red", "odd", "1to18", "19to36", "1-6dblstrt", "25-30dblstrt"]
+  },
+  "progression_type": "fibonacci",
+  "base_bet": 0.50,
+  "initial_balance": 50000.0,
+  "max_loss": 51.0,
+  "enable_profit_target": true,
+  "profit_target": 31.0,
+  "session_duration_minutes": 9999,
+  "sims": 2000,
+  "rounds": 100,
+  "sim_mode": "sequential",
+  "historical_data_source": "db",
+  "db_limit": 59526,
+  "db_offset": 0
+}

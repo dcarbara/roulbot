@@ -1,0 +1,34 @@
+{
+    "name": "test_red",
+    "variables": {
+        "red_gap": {
+            "type": "gap_since_last",
+            "target": "red"
+        }
+    },
+    "rules": [
+        {
+            "condition": {
+                "left": "@red_gap",
+                "operator": "gt",
+                "right": "5"
+            },
+            "action": {
+                "type": "bet",
+                "target": "1"
+            }
+        },
+        {
+            "condition": {
+                "left": "@red_gap",
+                "operator": "gt",
+                "right": "5"
+            },
+            "action": {
+                "type": "activate_strategy",
+                "target": "ds2"
+            }
+        }
+    ],
+    "type": "advanced_logic"
+}

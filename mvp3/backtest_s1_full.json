@@ -1,0 +1,19 @@
+{
+  "strategy_name": "S1",
+  "custom_strategies": {
+    "S1": ["col1", "col3", "1st12", "red", "1-6dblstrt"]
+  },
+  "progression_type": "fibonacci",
+  "base_bet": 0.50,
+  "initial_balance": 50000.0,
+  "max_loss": 55.0,
+  "enable_profit_target": true,
+  "profit_target": 64.0,
+  "session_duration_minutes": 9999,
+  "sims": 2000,
+  "rounds": 100,
+  "sim_mode": "sequential",
+  "historical_data_source": "db",
+  "db_limit": 59526,
+  "db_offset": 0
+}

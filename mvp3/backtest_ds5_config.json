@@ -1,0 +1,19 @@
+{
+  "strategy_name": "ds5",
+  "custom_strategies": {
+    "ds5": ["25-30dblstrt"]
+  },
+  "progression_type": "flat",
+  "base_bet": 1.0,
+  "initial_balance": 100.0,
+  "max_loss": 50.0,
+  "enable_profit_target": true,
+  "profit_target": 50.0,
+  "session_duration_minutes": 9999,
+  "sims": 10,
+  "rounds": 100,
+  "sim_mode": "sequential",
+  "historical_data_source": "db",
+  "db_limit": 1000,
+  "db_offset": 0
+}

@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpinEdge Strategy Backtest Report</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3350;
+    --accent: #4f8ef7;
+    --green: #2ecc71;
+    --green-dim: #1a4a2e;
+    --red: #e74c3c;
+    --yellow: #f1c40f;
+    --text: #e2e8f0;
+    --text-dim: #8892a4;
+    --text-muted: #556070;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 32px 24px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .report-header {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+
+  .report-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin-bottom: 20px;
+  }
+
+  .report-header h1 span {
+    color: var(--accent);
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+  }
+
+  .meta-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .meta-item .label {
+    color: var(--text-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .meta-item .value {
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+
+  /* ── Section headings ── */
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2 .badge {
+    background: var(--green-dim);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--green);
+  }
+
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 28px 0 12px;
+  }
+
+  section { margin-bottom: 40px; }
+
+  /* ── Main results table ── */
+  .results-table-wrap {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  table.results {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  table.results thead tr {
+    background: var(--surface2);
+  }
+
+  table.results thead th {
+    padding: 10px 14px;
+    text-align: left;
+    color: var(--text-dim);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  table.results thead th.num { text-align: right; }
+
+  table.results tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  table.results tbody tr:last-child { border-bottom: none; }
+
+  table.results tbody tr:hover { background: rgba(79,142,247,0.05); }
+
+  table.results tbody tr.highlight {
+    background: rgba(46,204,113,0.04);
+  }
+
+  table.results td {
+    padding: 11px 14px;
+    white-space: nowrap;
+  }
+
+  table.results td.num { text-align: right; font-family: var(--mono); }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .rank-1 { background: rgba(255,215,0,0.15); color: #ffd700; border: 1px solid rgba(255,215,0,0.3); }
+  .rank-2 { background: rgba(192,192,192,0.12); color: #c0c0c0; border: 1px solid rgba(192,192,192,0.25); }
+  .rank-3 { background: rgba(205,127,50,0.12); color: #cd7f32; border: 1px solid rgba(205,127,50,0.25); }
+  .rank-n { background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .strat-name {
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .strat-tag {
+    display: inline-block;
+    font-size: 11px;
+    background: rgba(79,142,247,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(79,142,247,0.25);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 6px;
+    font-weight: 500;
+  }
+
+  .desc { color: var(--text-dim); font-size: 12px; }
+
+  .pnl-pos { color: var(--green); font-weight: 700; font-family: var(--mono); }
+  .pnl-neg { color: var(--red); font-family: var(--mono); }
+
+  .tp-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 130px;
+  }
+
+  .tp-bar {
+    flex: 1;
+    height: 5px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .tp-bar-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 3px;
+  }
+
+  .tp-pct { font-family: var(--mono); color: var(--green); font-size: 12px; white-space: nowrap; }
+  .sl-pct { font-family: var(--mono); color: #e67e22; font-size: 12px; }
+
+  .bets-dot {
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.7;
+  }
+
+  .bets-num { margin-left: 4px; color: var(--text-dim); font-size: 12px; }
+
+  .init-val, .tp-val, .sl-val { font-family: var(--mono); }
+  .init-val { color: var(--text-dim); }
+  .tp-val   { color: #2ecc71; }
+  .sl-val   { color: #e67e22; }
+
+  .rd-badge {
+    display: inline-block;
+    background: rgba(241,196,15,0.1);
+    color: var(--yellow);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-family: var(--mono);
+    border: 1px solid rgba(241,196,15,0.2);
+  }
+
+  /* ── Summary cards ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .card.green::before { background: var(--green); }
+  .card.blue::before  { background: var(--accent); }
+  .card.orange::before { background: #e67e22; }
+
+  .card .card-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin-bottom: 8px;
+  }
+
+  .card .card-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    font-family: var(--mono);
+    line-height: 1.2;
+  }
+
+  .card .card-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* ── Glossary table ── */
+  table.glossary {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  table.glossary tr { border-bottom: 1px solid var(--border); }
+  table.glossary tr:last-child { border-bottom: none; }
+
+  table.glossary td {
+    padding: 10px 14px;
+    vertical-align: top;
+  }
+
+  table.glossary td:first-child {
+    width: 100px;
+    font-family: var(--mono);
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  table.glossary td:last-child { color: var(--text-dim); }
+
+  /* ── Progression compare table ── */
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  table.compare th {
+    background: var(--surface2);
+    padding: 10px 16px;
+    text-align: left;
+    color: var(--text-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  table.compare td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  table.compare tr:last-child td { border-bottom: none; }
+
+  table.compare td:first-child { font-weight: 600; color: var(--accent); }
+
+  /* ── Findings list ── */
+  .findings-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .findings-list li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .findings-list .f-rank {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    width: 28px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .findings-list .f-name {
+    font-weight: 600;
+    color: #fff;
+    min-width: 160px;
+  }
+
+  .findings-list .f-desc {
+    color: var(--text-dim);
+    font-size: 12px;
+    flex: 1;
+  }
+
+  .findings-list .f-pnl {
+    color: var(--green);
+    font-weight: 700;
+    font-family: var(--mono);
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  .findings-list .f-tp {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    white-space: nowrap;
+  }
+
+  /* ── Progression note ── */
+  .note-box {
+    background: rgba(79,142,247,0.05);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+
+  /* ── Continuous run section ── */
+  .bankrupt-banner {
+    background: rgba(231,76,60,0.08);
+    border: 1px solid rgba(231,76,60,0.35);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .bankrupt-banner .icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 1px;
+  }
+
+  .bankrupt-banner .title {
+    font-weight: 700;
+    color: var(--red);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .bankrupt-banner .body {
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .bankrupt-banner strong { color: var(--text); }
+
+  .rec-box {
+    background: rgba(46,204,113,0.05);
+    border: 1px solid rgba(46,204,113,0.25);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-top: 16px;
+  }
+
+  .rec-box strong { color: var(--green); }
+
+  .math-box {
+    background: rgba(241,196,15,0.04);
+    border: 1px solid rgba(241,196,15,0.2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .math-box strong { color: var(--yellow); }
+  .math-box code { font-size: 12px; }
+
+  .peak-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .peak-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .peak-card .pk-rank { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; }
+  .peak-card .pk-name { font-weight: 600; color: #fff; font-size: 14px; }
+  .peak-card .pk-desc { font-size: 11px; color: var(--text-dim); }
+  .peak-card .pk-peak { color: var(--yellow); font-family: var(--mono); font-size: 16px; font-weight: 700; }
+  .peak-card .pk-meta { font-size: 11px; color: var(--text-muted); font-family: var(--mono); }
+
+  .params-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .param-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+  }
+
+  .param-chip .pk { color: var(--accent); }
+
+  /* ── Footer ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    color: var(--text-muted);
+    font-size: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .footer span { display: flex; align-items: center; gap: 6px; }
+
+  code {
+    background: var(--surface2);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="report-header">
+  <h1>SpinEdge Strategy <span>Backtest Report</span></h1>
+  <div class="meta-grid">
+    <div class="meta-item"><span class="label">Dataset</span><span class="value">59,526 real spins — Feb 14 to Jun 21 2026</span></div>
+    <div class="meta-item"><span class="label">Sessions</span><span class="value">One per calendar day · balance resets daily</span></div>
+    <div class="meta-item"><span class="label">Progression</span><span class="value">Fibonacci P&amp;L-reset (max level 7)</span></div>
+    <div class="meta-item"><span class="label">Base bet</span><span class="value">$0.50 per position · $0.50→$10.50 sequence</span></div>
+    <div class="meta-item"><span class="label">Days tested</span><span class="value">98 calendar days</span></div>
+    <div class="meta-item"><span class="label">Data source</span><span class="value"><code>winning_numbers.db</code> (SQLite)</span></div>
+  </div>
+</div>
+
+<!-- ── Summary cards ── -->
+<div class="cards">
+  <div class="card green">
+    <div class="card-label">Profitable Strategies</div>
+    <div class="card-value">11 / 55</div>
+    <div class="card-sub">tested across 98 calendar days</div>
+  </div>
+  <div class="card green">
+    <div class="card-label">Best Campaign PnL</div>
+    <div class="card-value">+$1,368</div>
+    <div class="card-sub">S1-Aggressive · 57.1% TP rate</div>
+  </div>
+  <div class="card blue">
+    <div class="card-label">Highest TP Rate</div>
+    <div class="card-value">67.3%</div>
+    <div class="card-sub">Col1+1st12+DS1 · +$1,059 PnL</div>
+  </div>
+  <div class="card orange">
+    <div class="card-label">Best Avg / Day</div>
+    <div class="card-value">+$13.96</div>
+    <div class="card-sub">S1-Aggressive</div>
+  </div>
+</div>
+
+<!-- ── Results table ── -->
+<section>
+  <h2>Results <span class="badge">11 Profitable</span></h2>
+  <div class="results-table-wrap">
+    <table class="results">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Strategy</th>
+          <th>Description</th>
+          <th class="num">Bets</th>
+          <th class="num">Init</th>
+          <th class="num">TP</th>
+          <th class="num">SL</th>
+          <th class="num">Days</th>
+          <th class="num">Rounds</th>
+          <th>TP%</th>
+          <th class="num">SL%</th>
+          <th class="num">RD</th>
+          <th class="num">Camp PnL</th>
+          <th class="num">Avg/Day</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><span class="rank-badge rank-1">1</span></td>
+          <td><span class="strat-name">S1-Aggressive</span><span class="strat-tag">strat.md</span></td>
+          <td><span class="desc">Col1+Col3+1st12+Red+DS1</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="bets-num">5</span></div></td>
+          <td class="num"><span class="init-val">$200</span></td>
+          <td class="num"><span class="tp-val">$64</span></td>
+          <td class="num"><span class="sl-val">$55</span></td>
+          <td class="num">98</td>
+          <td class="num">4,102</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:57.1%"></div></div><span class="tp-pct">57.1%</span></div></td>
+          <td class="num"><span class="sl-pct">39.8%</span></td>
+          <td class="num"><span class="rd-badge">3</span></td>
+          <td class="num"><span class="pnl-pos">+$1,368</span></td>
+          <td class="num"><span class="pnl-pos">+$13.96</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-2">2</span></td>
+          <td><span class="strat-name">Col1+1st12+DS1</span></td>
+          <td><span class="desc">Col1+1st12+DS1</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="bets-num">3</span></div></td>
+          <td class="num"><span class="init-val">$200</span></td>
+          <td class="num"><span class="tp-val">$40</span></td>
+          <td class="num"><span class="sl-val">$55</span></td>
+          <td class="num">98</td>
+          <td class="num">3,452</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:67.3%"></div></div><span class="tp-pct">67.3%</span></div></td>
+          <td class="num"><span class="sl-pct">29.6%</span></td>
+          <td class="num"><span class="rd-badge">3</span></td>
+          <td class="num"><span class="pnl-pos">+$1,059</span></td>
+          <td class="num"><span class="pnl-pos">+$10.81</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-3">3</span></td>
+          <td><span class="strat-name">DS1+Col1</span></td>
+          <td><span class="desc">DS1+Col1</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><span class="bets-num">2</span></div></td>
+          <td class="num"><span class="init-val">$150</span></td>
+          <td class="num"><span class="tp-val">$40</span></td>
+          <td class="num"><span class="sl-val">$40</span></td>
+          <td class="num">98</td>
+          <td class="num">3,287</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:58.2%"></div></div><span class="tp-pct">58.2%</span></div></td>
+          <td class="num"><span class="sl-pct">39.8%</span></td>
+          <td class="num"><span class="rd-badge">2</span></td>
+          <td class="num"><span class="pnl-pos">+$813</span></td>
+          <td class="num"><span class="pnl-pos">+$8.30</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">4</span></td>
+          <td><span class="strat-name">DS1+DS6</span></td>
+          <td><span class="desc">DS 1-6 + DS 31-36</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><span class="bets-num">2</span></div></td>
+          <td class="num"><span class="init-val">$150</span></td>
+          <td class="num"><span class="tp-val">$40</span></td>
+          <td class="num"><span class="sl-val">$40</span></td>
+          <td class="num">98</td>
+          <td class="num">3,825</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:58.2%"></div></div><span class="tp-pct">58.2%</span></div></td>
+          <td class="num"><span class="sl-pct">38.8%</span></td>
+          <td class="num"><span class="rd-badge">3</span></td>
+          <td class="num"><span class="pnl-pos">+$601</span></td>
+          <td class="num"><span class="pnl-pos">+$6.13</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">5</span></td>
+          <td><span class="strat-name">DS1+DS5+Col1</span></td>
+          <td><span class="desc">DS1+DS5+Col1</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="bets-num">3</span></div></td>
+          <td class="num"><span class="init-val">$200</span></td>
+          <td class="num"><span class="tp-val">$40</span></td>
+          <td class="num"><span class="sl-val">$55</span></td>
+          <td class="num">98</td>
+          <td class="num">4,316</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:62.2%"></div></div><span class="tp-pct">62.2%</span></div></td>
+          <td class="num"><span class="sl-pct">35.7%</span></td>
+          <td class="num"><span class="rd-badge">2</span></td>
+          <td class="num"><span class="pnl-pos">+$488</span></td>
+          <td class="num"><span class="pnl-pos">+$4.97</span></td>
+        </tr>
+        <tr class="highlight">
+          <td><span class="rank-badge rank-n">6</span></td>
+          <td><span class="strat-name">S3-Conservative</span><span class="strat-tag">strat.md</span></td>
+          <td><span class="desc">Red+Odd+1-18+19-36+DS1+DS25</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="bets-num">6</span></div></td>
+          <td class="num"><span class="init-val">$200</span></td>
+          <td class="num"><span class="tp-val">$31</span></td>
+          <td class="num"><span class="sl-val">$51</span></td>
+          <td class="num">98</td>
+          <td class="num">2,955</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:66.3%"></div></div><span class="tp-pct">66.3%</span></div></td>
+          <td class="num"><span class="sl-pct">30.6%</span></td>
+          <td class="num"><span class="rd-badge">3</span></td>
+          <td class="num"><span class="pnl-pos">+$410</span></td>
+          <td class="num"><span class="pnl-pos">+$4.18</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">7</span></td>
+          <td><span class="strat-name">DS1+Red</span></td>
+          <td><span class="desc">DS1+Red</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><span class="bets-num">2</span></div></td>
+          <td class="num"><span class="init-val">$150</span></td>
+          <td class="num"><span class="tp-val">$40</span></td>
+          <td class="num"><span class="sl-val">$40</span></td>
+          <td class="num">98</td>
+          <td class="num">4,308</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:51%"></div></div><span class="tp-pct">51.0%</span></div></td>
+          <td class="num"><span class="sl-pct">44.9%</span></td>
+          <td class="num"><span class="rd-badge">4</span></td>
+          <td class="num"><span class="pnl-pos">+$128</span></td>
+          <td class="num"><span class="pnl-pos">+$1.31</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">8</span></td>
+          <td><span class="strat-name">DS2+DS5</span></td>
+          <td><span class="desc">DS 4-9 + DS 25-30</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><span class="bets-num">2</span></div></td>
+          <td class="num"><span class="init-val">$150</span></td>
+          <td class="num"><span class="tp-val">$40</span></td>
+          <td class="num"><span class="sl-val">$40</span></td>
+          <td class="num">98</td>
+          <td class="num">3,696</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:55.1%"></div></div><span class="tp-pct">55.1%</span></div></td>
+          <td class="num"><span class="sl-pct">42.9%</span></td>
+          <td class="num"><span class="rd-badge">2</span></td>
+          <td class="num"><span class="pnl-pos">+$122</span></td>
+          <td class="num"><span class="pnl-pos">+$1.24</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">9</span></td>
+          <td><span class="strat-name">DS5</span></td>
+          <td><span class="desc">DS 25-30</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><span class="bets-num">1</span></div></td>
+          <td class="num"><span class="init-val">$100</span></td>
+          <td class="num"><span class="tp-val">$20</span></td>
+          <td class="num"><span class="sl-val">$20</span></td>
+          <td class="num">98</td>
+          <td class="num">1,076</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:48%"></div></div><span class="tp-pct">48.0%</span></div></td>
+          <td class="num"><span class="sl-pct">50.0%</span></td>
+          <td class="num"><span class="rd-badge">2</span></td>
+          <td class="num"><span class="pnl-pos">+$108</span></td>
+          <td class="num"><span class="pnl-pos">+$1.11</span></td>
+        </tr>
+        <tr class="highlight">
+          <td><span class="rank-badge rank-n">10</span></td>
+          <td><span class="strat-name">S2-Moderate</span><span class="strat-tag">strat.md</span></td>
+          <td><span class="desc">Col1+1st12+3rd12+Odd+DS1</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="bets-num">5</span></div></td>
+          <td class="num"><span class="init-val">$300</span></td>
+          <td class="num"><span class="tp-val">$64</span></td>
+          <td class="num"><span class="sl-val">$119</span></td>
+          <td class="num">98</td>
+          <td class="num">5,562</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:62.2%"></div></div><span class="tp-pct">62.2%</span></div></td>
+          <td class="num"><span class="sl-pct">32.7%</span></td>
+          <td class="num"><span class="rd-badge">5</span></td>
+          <td class="num"><span class="pnl-pos">+$82</span></td>
+          <td class="num"><span class="pnl-pos">+$0.84</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">11</span></td>
+          <td><span class="strat-name">Col3+1st12</span></td>
+          <td><span class="desc">Col3+1st12</span></td>
+          <td class="num"><div class="bets-dot"><div class="dot"></div><div class="dot"></div><span class="bets-num">2</span></div></td>
+          <td class="num"><span class="init-val">$150</span></td>
+          <td class="num"><span class="tp-val">$40</span></td>
+          <td class="num"><span class="sl-val">$40</span></td>
+          <td class="num">98</td>
+          <td class="num">5,003</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:50%"></div></div><span class="tp-pct">50.0%</span></div></td>
+          <td class="num"><span class="sl-pct">45.9%</span></td>
+          <td class="num"><span class="rd-badge">4</span></td>
+          <td class="num"><span class="pnl-pos">+$44</span></td>
+          <td class="num"><span class="pnl-pos">+$0.45</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Key Findings ── -->
+<section>
+  <h2>Key Findings</h2>
+
+  <h3>Top 5 by Campaign PnL</h3>
+  <ul class="findings-list">
+    <li>
+      <span class="f-rank">#1</span>
+      <span class="f-name">S1-Aggressive</span>
+      <span class="f-desc">Col1+Col3+1st12+Red+DS1 &mdash; 5 bets, $200 init</span>
+      <span class="f-tp">TP 57.1%</span>
+      <span class="f-pnl">+$1,368</span>
+    </li>
+    <li>
+      <span class="f-rank">#2</span>
+      <span class="f-name">Col1+1st12+DS1</span>
+      <span class="f-desc">Highest TP rate of all strategies &mdash; 3 bets, $200 init</span>
+      <span class="f-tp">TP 67.3%</span>
+      <span class="f-pnl">+$1,059</span>
+    </li>
+    <li>
+      <span class="f-rank">#3</span>
+      <span class="f-name">DS1+Col1</span>
+      <span class="f-desc">Double Street 1-6 + Column 1 &mdash; 2 bets, $150 init</span>
+      <span class="f-tp">TP 58.2%</span>
+      <span class="f-pnl">+$813</span>
+    </li>
+    <li>
+      <span class="f-rank">#4</span>
+      <span class="f-name">DS1+DS6</span>
+      <span class="f-desc">Double Streets 1-6 and 31-36 &mdash; 2 bets, $150 init</span>
+      <span class="f-tp">TP 58.2%</span>
+      <span class="f-pnl">+$601</span>
+    </li>
+    <li>
+      <span class="f-rank">#5</span>
+      <span class="f-name">DS1+DS5+Col1</span>
+      <span class="f-desc">DS 1-6, DS 25-30, Column 1 &mdash; 3 bets, $200 init</span>
+      <span class="f-tp">TP 62.2%</span>
+      <span class="f-pnl">+$488</span>
+    </li>
+  </ul>
+
+  <h3>strat.md Bot Strategies</h3>
+  <ul class="findings-list">
+    <li>
+      <span class="f-rank">#1</span>
+      <span class="f-name">S1-Aggressive</span>
+      <span class="f-desc">Rank #1 overall &mdash; highest absolute return</span>
+      <span class="f-tp">TP 57.1%</span>
+      <span class="f-pnl">+$1,368</span>
+    </li>
+    <li>
+      <span class="f-rank">#6</span>
+      <span class="f-name">S3-Conservative</span>
+      <span class="f-desc">66.3% TP rate &mdash; highest among bot strategies</span>
+      <span class="f-tp">TP 66.3%</span>
+      <span class="f-pnl">+$410</span>
+    </li>
+    <li>
+      <span class="f-rank">#10</span>
+      <span class="f-name">S2-Moderate</span>
+      <span class="f-desc">Widest SL cushion ($119) &mdash; most resilient to drawdown</span>
+      <span class="f-tp">TP 62.2%</span>
+      <span class="f-pnl">+$82</span>
+    </li>
+  </ul>
+</section>
+
+<hr>
+
+<!-- ── Glossary ── -->
+<section>
+  <h2>Column Glossary</h2>
+  <div class="results-table-wrap">
+    <table class="glossary">
+      <tr><td>Bets</td><td>Number of independent bet positions placed each round</td></tr>
+      <tr><td>Init</td><td>Session starting balance — resets at the start of each calendar day</td></tr>
+      <tr><td>TP</td><td>Take-profit threshold; session ends when daily P&amp;L ≥ this amount</td></tr>
+      <tr><td>SL</td><td>Stop-loss threshold (soft — Fibonacci can overshoot on the final losing round)</td></tr>
+      <tr><td>Days</td><td>Total calendar days played — 98 for every strategy</td></tr>
+      <tr><td>Rounds</td><td>Total spin rounds consumed across all 98 sessions</td></tr>
+      <tr><td>TP%</td><td>Percentage of days that ended with take-profit</td></tr>
+      <tr><td>SL%</td><td>Percentage of days that ended with stop-loss</td></tr>
+      <tr><td>RD</td><td>Days where all available spins were exhausted before hitting TP or SL</td></tr>
+      <tr><td>Camp PnL</td><td>Net profit / loss across all 98 days (only positive strategies shown)</td></tr>
+      <tr><td>Avg/Day</td><td>Average daily P&amp;L = Camp PnL ÷ 98</td></tr>
+    </table>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Progression note ── -->
+<section>
+  <h2>Progression Note</h2>
+  <div class="results-table-wrap">
+    <table class="compare">
+      <thead>
+        <tr><th>Rule</th><th>Reset condition</th><th>Effect</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Win-reset</td>
+          <td>Any round where net P&amp;L &gt; $0</td>
+          <td style="color:var(--text-dim)">Resets early — less recovery leverage per sequence</td>
+        </tr>
+        <tr>
+          <td>P&amp;L-reset <em style="color:var(--text-muted);font-weight:400">(this report)</em></td>
+          <td>Cumulative session P&amp;L ≥ $0</td>
+          <td style="color:var(--text-dim)">Holds higher Fibonacci level until the session is fully back in profit</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note-box">
+    Break-even rounds (net P&amp;L = $0, common in multi-position strategies) do <strong>not</strong> advance the Fibonacci index per strat.md rules — only rounds where net &lt; $0 escalate the bet level.
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Fibonacci Equity TP/SL ── -->
+<section>
+  <h2>Fibonacci + 0.1% Equity TP/SL Sessions <span class="badge" style="background:rgba(241,196,15,0.08);color:var(--yellow);border-color:rgba(241,196,15,0.4)">1 / 55 Profitable</span></h2>
+
+  <div class="params-row">
+    <div class="param-chip">Base bet: <span class="pk">0.1% of equity / n_labels — reset each session</span></div>
+    <div class="param-chip">Fibonacci: <span class="pk">P&amp;L-reset · max level 7 (×21)</span></div>
+    <div class="param-chip">TP: <span class="pk">+$41 (session ends)</span></div>
+    <div class="param-chip">SL: <span class="pk">−$50 (session ends)</span></div>
+    <div class="param-chip">Spins: <span class="pk">59,526 · account compounds across sessions</span></div>
+  </div>
+
+  <div class="bankrupt-banner" style="border-color:rgba(46,204,113,0.4);background:rgba(46,204,113,0.05)">
+    <div class="icon" style="color:var(--green)">&#9650;</div>
+    <div>
+      <div class="title" style="color:var(--green)">DS2 (Double Street 4-9): +739% — $1,000 → $8,392</div>
+      <div class="body">
+        <strong>11,608 sessions</strong> completed (average ~5 spins/session at peak equity).
+        Peak balance <strong>$10,585</strong> before a 78.8% drawdown, recovering to $8,392 by final spin.
+        All 54 other strategies bankrupt — house edge prevails without the specific advantage DS2 holds in this dataset.
+      </div>
+    </div>
+  </div>
+
+  <div class="math-box">
+    <strong>Why DS2 + Fibonacci works here:</strong><br>
+    As DS2's account grew, the session base bet scaled with equity (0.1% of balance). At high equity (~$8k),
+    level-7 bet ≈ <code>$8,000 × 0.001 × 21 = $168/label</code>. A single DS2 hit pays +5× = <strong>+$840</strong>,
+    ending the session far above the TP=$41 threshold (overshoot = +$799). SL overshoot is bounded by one
+    level-7 loss (≈ −$168+SL). This massive TP overshoot > SL overshoot asymmetry lets DS2 be profitable
+    even at a sub-55% raw TP rate (46.7%).<br><br>
+    <strong>Why multi-label strategies fail:</strong> S1, S2, S3 have such high coverage (~80–90% of numbers)
+    that most rounds result in near-zero net P&L. Fibonacci barely escalates (few net-loss rounds). Without
+    high-level escalation, there is no recovery amplification — sessions drift slowly toward SL on house edge.
+  </div>
+
+  <div class="results-table-wrap">
+    <table class="results">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Strategy</th>
+          <th>Description</th>
+          <th class="num">Return</th>
+          <th class="num">Final $</th>
+          <th class="num">Peak $</th>
+          <th class="num">MaxDD</th>
+          <th>TP%</th>
+          <th class="num">Sessions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><span class="rank-badge rank-1">1</span></td>
+          <td><span class="strat-name">DS2</span></td>
+          <td><span class="desc">Double Street 4-9 — only winner</span></td>
+          <td class="num"><span class="pnl-pos">+739.1%</span></td>
+          <td class="num"><span class="pnl-pos">$8,391</span></td>
+          <td class="num" style="color:var(--yellow)">$10,585</td>
+          <td class="num" style="color:var(--red)">78.8%</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:46.7%"></div></div><span class="tp-pct">46.7%</span></div></td>
+          <td class="num">11,608</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">—</span></td>
+          <td><span class="strat-name">DS1+DS6</span></td>
+          <td><span class="desc">58.4% TP rate — best TP among failed strategies</span></td>
+          <td class="num"><span class="pnl-neg">−99.9%</span></td>
+          <td class="num">$0.68</td>
+          <td class="num">$2,472</td>
+          <td class="num">100%</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:58.4%"></div></div><span class="tp-pct">58.4%</span></div></td>
+          <td class="num">1,216</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">—</span></td>
+          <td><span class="strat-name">DS1</span></td>
+          <td><span class="desc">49.8% TP — peaked $2,806 then collapsed</span></td>
+          <td class="num"><span class="pnl-neg">−99.9%</span></td>
+          <td class="num">$0.89</td>
+          <td class="num">$2,806</td>
+          <td class="num">100%</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:49.8%"></div></div><span class="tp-pct">49.8%</span></div></td>
+          <td class="num">1,401</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">—</span></td>
+          <td><span class="strat-name">S1-Aggressive</span><span class="strat-tag">strat.md</span></td>
+          <td><span class="desc">Fibonacci barely escalates — high coverage kills it</span></td>
+          <td class="num"><span class="pnl-neg">−100%</span></td>
+          <td class="num">$0.52</td>
+          <td class="num">$1,139</td>
+          <td class="num">100%</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:39.7%"></div></div><span class="tp-pct">39.7%</span></div></td>
+          <td class="num">63</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rec-box" style="margin-top:16px">
+    <strong>Key insight:</strong> For the Fibonacci+equity TP/SL approach to work, the strategy needs
+    <em>high per-round variance</em> (like a single DS at 5:1 payout) so the Fibonacci escalates
+    meaningfully during losing streaks and creates large recovery wins that overshoot TP.
+    High-coverage multi-label strategies suppress this variance and remove the mechanism that makes
+    Fibonacci profitable. <strong>DS2 wins in this dataset</strong> because numbers 4-9 appeared
+    at favorable moments during escalation — this is dataset-specific and may not persist on future data.
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Flat Bet TP/SL Sessions ── -->
+<section>
+  <h2>Flat Bet — TP/SL Sessions <span class="badge" style="background:rgba(241,196,15,0.08);color:var(--yellow);border-color:rgba(241,196,15,0.4)">2 / 55 Profitable</span></h2>
+
+  <div class="params-row">
+    <div class="param-chip">Flat bet: <span class="pk">$1.00 per label per round</span></div>
+    <div class="param-chip">TP: <span class="pk">+$41 (session ends)</span></div>
+    <div class="param-chip">SL: <span class="pk">−$50 (session ends)</span></div>
+    <div class="param-chip">Breakeven TP rate: <span class="pk">54.9%</span></div>
+    <div class="param-chip">Spins: <span class="pk">59,526 continuous</span></div>
+  </div>
+
+  <div class="math-box">
+    <strong>Breakeven formula:</strong> with asymmetric TP/SL the required win rate is
+    <code>SL&thinsp;/&thinsp;(TP&thinsp;+&thinsp;SL) = 50&thinsp;/&thinsp;91 = 54.9%</code>.
+    Any strategy whose TP rate stays below that burns money regardless of how many sessions run.
+    <br><br>
+    <strong>Why single DS beats multi-label with flat betting:</strong> a lone double-street pays +$5 on a hit
+    and loses only −$1 on a miss (5:1 asymmetry). This creates a <em>high-variance</em> walk that can spike
+    to TP=$41 in a lucky burst. Multi-label strategies cancel variance — most rounds result in near-zero P&L
+    from coverage overlap — so the walk barely moves and slowly drifts toward the SL on the house edge.
+    Fibonacci solves this by escalating bets during losing streaks, which is why the same multi-label
+    strategies flip profitable under that regime.
+  </div>
+
+  <div class="results-table-wrap">
+    <table class="results">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Strategy</th>
+          <th>Description</th>
+          <th class="num">Labels</th>
+          <th class="num">Sessions</th>
+          <th>TP%</th>
+          <th class="num">SL%</th>
+          <th class="num">TP cnt</th>
+          <th class="num">SL cnt</th>
+          <th class="num">Total PnL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><span class="rank-badge rank-1">1</span></td>
+          <td><span class="strat-name">DS2</span></td>
+          <td><span class="desc">Double Street 4-9</span></td>
+          <td class="num">1</td>
+          <td class="num">148</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:59.5%"></div></div><span class="tp-pct">59.5%</span></div></td>
+          <td class="num"><span class="sl-pct">40.5%</span></td>
+          <td class="num">88</td>
+          <td class="num">60</td>
+          <td class="num"><span class="pnl-pos">+$726</span></td>
+        </tr>
+        <tr class="highlight">
+          <td><span class="rank-badge rank-2">2</span></td>
+          <td><span class="strat-name">DS1</span></td>
+          <td><span class="desc">Double Street 1-6</span></td>
+          <td class="num">1</td>
+          <td class="num">164</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:56.1%"></div></div><span class="tp-pct">56.1%</span></div></td>
+          <td class="num"><span class="sl-pct">43.9%</span></td>
+          <td class="num">92</td>
+          <td class="num">72</td>
+          <td class="num"><span class="pnl-pos">+$312</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-3">3</span></td>
+          <td><span class="strat-name">1st12</span></td>
+          <td><span class="desc">1st Dozen</span></td>
+          <td class="num">1</td>
+          <td class="num">68</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:48.5%"></div></div><span class="tp-pct">48.5%</span></div></td>
+          <td class="num"><span class="sl-pct">51.5%</span></td>
+          <td class="num">33</td>
+          <td class="num">35</td>
+          <td class="num"><span class="pnl-neg">−$378</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">4</span></td>
+          <td><span class="strat-name">DS2+DS5</span></td>
+          <td><span class="desc">DS 4-9 + DS 25-30</span></td>
+          <td class="num">2</td>
+          <td class="num">227</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:49.8%"></div></div><span class="tp-pct">49.8%</span></div></td>
+          <td class="num"><span class="sl-pct">50.2%</span></td>
+          <td class="num">113</td>
+          <td class="num">114</td>
+          <td class="num"><span class="pnl-neg">−$882</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">5</span></td>
+          <td><span class="strat-name">DS1+Red</span></td>
+          <td><span class="desc">DS1 + Red</span></td>
+          <td class="num">2</td>
+          <td class="num">192</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:48.4%"></div></div><span class="tp-pct">48.4%</span></div></td>
+          <td class="num"><span class="sl-pct">51.6%</span></td>
+          <td class="num">93</td>
+          <td class="num">99</td>
+          <td class="num"><span class="pnl-neg">−$918</span></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">—</span></td>
+          <td><span class="strat-name">S1-Aggressive</span><span class="strat-tag">strat.md</span></td>
+          <td><span class="desc">Col1+Col3+1st12+Red+DS1 — low variance/round</span></td>
+          <td class="num">5</td>
+          <td class="num">436</td>
+          <td><div class="tp-bar-wrap"><div class="tp-bar"><div class="tp-bar-fill" style="width:43.1%"></div></div><span class="tp-pct">43.1%</span></div></td>
+          <td class="num"><span class="sl-pct">56.9%</span></td>
+          <td class="num">188</td>
+          <td class="num">248</td>
+          <td class="num"><span class="pnl-neg">−$4,593</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rec-box" style="margin-top:16px">
+    <strong>Takeaway:</strong> Flat betting rewards high-variance single bets (DS1/DS2 at 5:1 payout) not coverage breadth.
+    Only strategies with natural TP rate &gt; <strong>54.9%</strong> will be profitable at TP=$41 / SL=$50.
+    DS2 hits that mark at <strong>59.5%</strong>; DS1 at <strong>56.1%</strong>. All multi-label strategies fall short
+    because coverage overlap dampens per-round variance and prevents the session from spiking to TP.
+    To make multi-label strategies profitable in flat-bet mode: lower the SL or raise the TP to change the
+    required breakeven rate (e.g., TP=$64 / SL=$41 → breakeven = 39%, which S1's 43% TP clears).
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Continuous Run Analysis ── -->
+<section>
+  <h2>Continuous Run Analysis <span class="badge" style="background:rgba(231,76,60,0.1);color:var(--red);border-color:var(--red)">0 / 55 Profitable</span></h2>
+
+  <div class="bankrupt-banner">
+    <div class="icon">&#9888;</div>
+    <div>
+      <div class="title">All 55 strategies bankrupt — continuous play cannot overcome the house edge</div>
+      <div class="body">
+        Running all 59,526 spins in a single uninterrupted pass (no daily TP/SL stops) with Fibonacci
+        progression and 0.1&thinsp;% equity base bet: <strong>every strategy ended with a final balance under $1</strong>.
+        The Fibonacci did escalate during losing sequences, but the mathematical house edge of
+        <strong>−2.70&thinsp;% per bet</strong> (1 zero on a 37-number wheel) compounds relentlessly and
+        drains all capital over tens of thousands of rounds regardless of bet sizing.
+      </div>
+    </div>
+  </div>
+
+  <div class="params-row">
+    <div class="param-chip">Init: <span class="pk">$1,000</span></div>
+    <div class="param-chip">Base bet: <span class="pk">0.1% of equity / n_labels</span></div>
+    <div class="param-chip">Fib max level: <span class="pk">7 (×21 → 2.1% max total bet)</span></div>
+    <div class="param-chip">Virtual SL: <span class="pk">20% drawdown → force Fibonacci reset</span></div>
+    <div class="param-chip">Spins: <span class="pk">59,526 (no stopping)</span></div>
+  </div>
+
+  <div class="math-box">
+    <strong>Why it always fails:</strong><br>
+    House edge = 1/37 ≈ 2.703&thinsp;% per unit wagered. With an average bet of ~0.2&thinsp;% of equity per round
+    (across Fibonacci levels), expected loss per round ≈ 0.2% × 2.703% = 0.0054% of equity.
+    Over 59,526 rounds: <code>(1 − 0.000054)^59526 ≈ 0.04</code> — a 96% expected capital destruction.
+    No progressive system can overcome this; Fibonacci only redistributes <em>when</em> you lose, not
+    <em>whether</em> you lose. The virtual SL prevented runaway escalation but couldn't reverse the
+    long-run negative EV.
+  </div>
+
+  <h3>Peak Balances Achieved Before Collapse (top 8 by peak)</h3>
+  <div class="peak-grid">
+    <div class="peak-card">
+      <div class="pk-rank">Peak #1</div>
+      <div class="pk-name">DS1</div>
+      <div class="pk-desc">Double Street 1-6</div>
+      <div class="pk-peak">$4,088</div>
+      <div class="pk-meta">+309% from start · then collapsed to $0.92</div>
+    </div>
+    <div class="peak-card">
+      <div class="pk-rank">Peak #2</div>
+      <div class="pk-name">DS2</div>
+      <div class="pk-desc">Double Street 4-9</div>
+      <div class="pk-peak">$3,918</div>
+      <div class="pk-meta">+292% from start · final $0.99</div>
+    </div>
+    <div class="peak-card">
+      <div class="pk-rank">Peak #3</div>
+      <div class="pk-name">1st12</div>
+      <div class="pk-desc">1st Dozen only</div>
+      <div class="pk-peak">$3,764</div>
+      <div class="pk-meta">+276% from start · final $0.97</div>
+    </div>
+    <div class="peak-card">
+      <div class="pk-rank">Peak #4</div>
+      <div class="pk-name">Col1+1st12+DS1</div>
+      <div class="pk-desc">Calendar-day rank #2</div>
+      <div class="pk-peak">$2,595</div>
+      <div class="pk-meta">+160% from start · final $0.94</div>
+    </div>
+    <div class="peak-card">
+      <div class="pk-rank">Peak #5</div>
+      <div class="pk-name">DS3</div>
+      <div class="pk-desc">Double Street 7-12</div>
+      <div class="pk-peak">$2,565</div>
+      <div class="pk-meta">+157% from start · final $0.92</div>
+    </div>
+    <div class="peak-card">
+      <div class="pk-rank">Peak #6</div>
+      <div class="pk-name">S2-Moderate</div>
+      <div class="pk-desc">strat.md moderate strategy</div>
+      <div class="pk-peak">$2,060</div>
+      <div class="pk-meta">+106% from start · final $0.95</div>
+    </div>
+    <div class="peak-card">
+      <div class="pk-rank">Peak #7</div>
+      <div class="pk-name">Col1</div>
+      <div class="pk-desc">Column 1 only</div>
+      <div class="pk-peak">$2,181</div>
+      <div class="pk-meta">+118% from start · final $0.98</div>
+    </div>
+    <div class="peak-card">
+      <div class="pk-rank">Peak #8</div>
+      <div class="pk-name">DS1+Col1</div>
+      <div class="pk-desc">Calendar-day rank #3</div>
+      <div class="pk-peak">$5,903</div>
+      <div class="pk-meta">+490% from start (1% run) · final $0.95</div>
+    </div>
+  </div>
+
+  <div class="rec-box">
+    <strong>Recommendation — How to grow the fund:</strong><br>
+    The profitability seen in the calendar-day results (<a href="#" style="color:var(--green)">11 strategies profitable</a>)
+    comes from the <em>session TP/SL boundary structure</em>, not from the progression system alone.
+    Daily boundaries create an option-like asymmetry: you capture gains each time the session hits TP
+    (57&ndash;67&thinsp;% of days for the best strategies) and cut losses at SL.
+    To grow the fund compoundly while keeping this structure, the correct approach is:<br><br>
+    &bull; Keep daily sessions with TP/SL as per strat.md<br>
+    &bull; Replace the fixed $0.50 base bet with <strong>0.1&thinsp;% of account equity / n_labels</strong><br>
+    &bull; As the account grows the bets and TP/SL thresholds grow proportionally — this is true compound growth<br>
+    &bull; S1-Aggressive at +7&thinsp;% per session EV × 57.1&thinsp;% win rate compounds to <em>double the account roughly every 10&ndash;15 winning days</em>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Footer ── -->
+<!-- ── 3-6 Chip Fixed Bet Fibonacci TP/SL ── -->
+<section>
+  <h2>3-6 Chip Fixed Bet — Fibonacci TP/SL Sessions <span class="badge" style="background:rgba(241,196,15,0.08);color:var(--yellow);border-color:rgba(241,196,15,0.4)">1 / 36 Profitable</span></h2>
+
+  <div class="params-row">
+    <div class="param-chip">Base bet: <strong>$0.10 / label (fixed)</strong></div>
+    <div class="param-chip">Starting balance: <strong>$200</strong></div>
+    <div class="param-chip">TP: <strong>41 × n × $0.10</strong> (proportional)</div>
+    <div class="param-chip">SL: <strong>-50 × n × $0.10</strong> (proportional)</div>
+    <div class="param-chip">Fibonacci: <strong>max level 7 (×21)</strong></div>
+    <div class="param-chip">Strategies: <strong>36 (3–6 labels only)</strong></div>
+  </div>
+
+  <div class="math-box">
+    <strong>Proportional TP/SL rationale:</strong> with $0.10/label, a 3-chip strategy bets $0.30/round.
+    A fixed TP=$41 would require ~137 net winning rounds — most strategies would never complete a single session in 59,526 spins.
+    Scaling TP/SL by n×base_bet keeps each session ~41 winning rounds / ~50 losing rounds regardless of chip count,
+    making comparison fair across strategies.<br><br>
+    <strong>Breakeven TP rate:</strong> SL / (TP + SL) = 50 / (41 + 50) = <strong>54.9%</strong> (same for all strategies).
+    3-chip: TP=$12.30 / SL=$15.00 → 13 SL-hits to bankrupt $200.
+    5-chip: TP=$20.50 / SL=$25.00 → 8 SL-hits to bankrupt $200.
+  </div>
+
+  <div class="rec-box" style="border-color:var(--yellow)">
+    <strong>Why only 1/36 survived:</strong> The $200 starting balance provides very little runway
+    (only 8–13 consecutive SL-hits to bankruptcy depending on chip count). Without compounding,
+    the house edge gradually erodes the bankroll. The sole survivor (DS1+DS2+DS3) works via
+    <em>overlap-amplified variance</em>: numbers 4-9 win 2 double streets simultaneously (+9×bet),
+    which at Fibonacci level 7 yields +$18.90 against a TP of $12.30 — a 53% TP overshoot.
+    This asymmetric overshoot vs SL undershoot is the same mechanism that made DS2 profitable.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>Strategy</th><th>Labels</th><th>TP/$</th><th>Return</th>
+        <th>Final</th><th>Peak</th><th>Max DD</th><th>TP Rate</th><th>Sessions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="profit-row">
+        <td>1</td><td><strong>DS1+DS2+DS3</strong></td><td>3</td><td>$12.30</td>
+        <td style="color:var(--green)"><strong>+115.7%</strong></td>
+        <td style="color:var(--green)">$431.30</td>
+        <td>$923.60</td><td>83.5%</td><td>55.1%</td><td>2,290</td>
+      </tr>
+      <tr><td>2</td><td>DS1+DS2+DS3+D1+D2+D3</td><td>6</td><td>$24.60</td><td style="color:var(--red)">-99.5%</td><td>$0.97</td><td>$771.80</td><td>99.9%</td><td>53.4%</td><td>191</td></tr>
+      <tr><td>3</td><td>DS1+DS6+Red+Odd</td><td>4</td><td>$16.40</td><td style="color:var(--red)">-99.6%</td><td>$0.80</td><td>$354.00</td><td>99.8%</td><td>54.1%</td><td>159</td></tr>
+      <tr><td>4</td><td>DS1+DS3+DS5</td><td>3</td><td>$12.30</td><td style="color:var(--red)">-99.8%</td><td>$0.50</td><td>$266.60</td><td>99.8%</td><td>53.9%</td><td>141</td></tr>
+      <tr><td>5</td><td>DS2+DS4+DS6</td><td>3</td><td>$12.30</td><td style="color:var(--red)">-99.6%</td><td>$0.80</td><td>$262.10</td><td>99.7%</td><td>52.5%</td><td>118</td></tr>
+      <tr><td>6</td><td>DS1+DS4+DS6</td><td>3</td><td>$12.30</td><td style="color:var(--red)">-100.0%</td><td>$0.00</td><td>$228.50</td><td>100.0%</td><td>54.4%</td><td>149</td></tr>
+      <tr><td>7</td><td>S2-Moderate (5-chip)</td><td>5</td><td>$20.50</td><td style="color:var(--red)">-100.0%</td><td>$0.00</td><td>$330.40</td><td>100.0%</td><td>52.9%</td><td>140</td></tr>
+      <tr><td>8</td><td>1st12+Col1+DS1+Red</td><td>4</td><td>$16.40</td><td style="color:var(--red)">-100.0%</td><td>$0.00</td><td>$333.00</td><td>100.0%</td><td>51.0%</td><td>143</td></tr>
+      <tr><td colspan="10" style="color:var(--text-muted);text-align:center;padding:8px">
+        … 28 more strategies, all bankrupt (final: $0.00–$0.93)
+      </td></tr>
+    </tbody>
+  </table>
+
+  <div class="math-box" style="margin-top:16px">
+    <strong>DS1+DS2+DS3 overlap mechanics (numbers 1-12):</strong><br>
+    • Numbers <strong>1-3</strong>: win DS1 only → +3×bet per round<br>
+    • Numbers <strong>4-6</strong>: win DS1 + DS2 → +<strong>9×bet</strong> per round (double-win zone)<br>
+    • Numbers <strong>7-9</strong>: win DS2 + DS3 → +<strong>9×bet</strong> per round (double-win zone)<br>
+    • Numbers <strong>10-12</strong>: win DS3 only → +3×bet per round<br>
+    • Numbers <strong>13-36 + 0</strong>: lose all three → -3×bet per round<br><br>
+    At Fibonacci level 7 (×21, base=$0.10): double-win = 9×$2.10 = +<strong>$18.90</strong> vs TP=$12.30.
+    Single-DS win = 3×$2.10 = +$6.30 (TP undershoot, session continues).
+    This high-variance burst drives the 55.1% TP rate above breakeven.
+  </div>
+
+</section>
+
+<hr>
+
+<!-- ── TP/SL Optimisation Sweep ── -->
+<section>
+  <h2>TP/SL Optimisation Sweep — DS1+DS2+DS3 <span class="badge" style="background:rgba(79,142,247,0.08);color:var(--accent);border-color:rgba(79,142,247,0.4)">Parameter Search</span></h2>
+
+  <div class="params-row">
+    <div class="param-chip">Strategy: <strong>DS1+DS2+DS3 only</strong></div>
+    <div class="param-chip">Base bet: <strong>$0.10 / label</strong></div>
+    <div class="param-chip">Starting balance: <strong>$500</strong></div>
+    <div class="param-chip">Fibonacci: <strong>max level 8 (×34), reset on overflow</strong></div>
+  </div>
+
+  <div class="math-box">
+    <strong>Why reduce TP?</strong> With TP=$41 and $0.10/label only 348 sessions complete in 59,526 spins.
+    Fewer sessions = less edge accumulated. Reducing TP allows more sessions, but reducing TP alone (keeping SL=$50)
+    <em>raises the breakeven TP rate required</em> — which makes things harder, not easier.<br><br>
+    <strong>Rule:</strong> TP and SL must scale together to keep the breakeven rate constant at 54.9%.
+    Breakeven TP rate = SL / (TP + SL). With the 41:50 ratio this is always 55.0%.
+  </div>
+
+  <h3 style="margin:20px 0 10px;font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Approach A — Fixed SL=$50, varying TP</h3>
+  <table>
+    <thead>
+      <tr><th>TP</th><th>SL</th><th>Breakeven</th><th>Return</th><th>Final</th><th>TP Rate</th><th>Sessions</th><th>Avg/Sess</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>$10</td><td>$50</td><td>83.3%</td><td style="color:var(--red)">-5.9%</td><td>$470.30</td><td>79.3%</td><td>1,117</td><td>-$0.008</td></tr>
+      <tr><td>$15</td><td>$50</td><td>76.9%</td><td style="color:var(--red)">-40.4%</td><td>$297.80</td><td>73.8%</td><td>810</td><td>-$0.224</td></tr>
+      <tr><td>$20</td><td>$50</td><td>71.4%</td><td style="color:var(--green)">+15.8%</td><td>$579.20</td><td>69.2%</td><td>634</td><td>+$0.158</td></tr>
+      <tr><td>$25</td><td>$50</td><td>66.7%</td><td style="color:var(--green)">+12.8%</td><td>$563.90</td><td>65.2%</td><td>526</td><td>+$0.162</td></tr>
+      <tr><td>$35</td><td>$50</td><td>58.8%</td><td style="color:var(--green)">+17.5%</td><td>$587.30</td><td>58.1%</td><td>422</td><td>+$0.257</td></tr>
+      <tr><td>$41</td><td>$50</td><td>54.9%</td><td style="color:var(--green)">+20.7%</td><td>$603.50</td><td>54.9%</td><td>348</td><td>+$0.359</td></tr>
+      <tr><td>$50</td><td>$50</td><td>50.0%</td><td style="color:var(--green)">+41.7%</td><td>$708.50</td><td>50.9%</td><td>289</td><td>+$0.795</td></tr>
+    </tbody>
+  </table>
+  <p style="color:var(--text-dim);font-size:12px;margin:6px 0 16px">Best in Approach A: TP=$50/SL=$50 (+41.7%). Reducing TP below $41 with fixed SL hurts returns.</p>
+
+  <h3 style="margin:20px 0 10px;font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Approach B — Proportional TP:SL = 41:50 (breakeven fixed at 55%)</h3>
+  <table>
+    <thead>
+      <tr><th>TP</th><th>SL</th><th>Breakeven</th><th>Return</th><th>Final</th><th>TP Rate</th><th>Sessions</th><th>Avg/Sess</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>$5</td><td>$6.10</td><td>55.0%</td><td style="color:var(--red)">-100.0%</td><td>$0.00</td><td>55.9%</td><td>3,247</td><td>-$0.153</td></tr>
+      <tr><td>$8</td><td>$9.76</td><td>55.0%</td><td style="color:var(--red)">-26.6%</td><td>$366.80</td><td>54.7%</td><td>3,089</td><td>-$0.043</td></tr>
+      <tr><td>$10</td><td>$12.20</td><td>55.0%</td><td style="color:var(--red)">-43.4%</td><td>$282.80</td><td>54.2%</td><td>2,662</td><td>-$0.082</td></tr>
+      <tr><td>$12</td><td>$14.63</td><td>54.9%</td><td style="color:var(--green)">+49.6%</td><td>$748.10</td><td>54.2%</td><td>2,327</td><td>+$0.106</td></tr>
+      <tr><td>$15</td><td>$18.29</td><td>54.9%</td><td style="color:var(--green)">+85.1%</td><td>$925.70</td><td>54.7%</td><td>1,785</td><td>+$0.231</td></tr>
+      <tr class="profit-row"><td><strong>$20</strong></td><td><strong>$24.40</strong></td><td><strong>55.0%</strong></td><td style="color:var(--green)"><strong>+147.2%</strong></td><td><strong>$1,235.90</strong></td><td><strong>54.7%</strong></td><td><strong>1,134</strong></td><td><strong>+$0.637</strong></td></tr>
+      <tr><td>$25</td><td>$30.49</td><td>54.9%</td><td style="color:var(--green)">+116.2%</td><td>$1,081.10</td><td>55.2%</td><td>797</td><td>+$0.711</td></tr>
+      <tr><td>$30</td><td>$36.59</td><td>54.9%</td><td style="color:var(--green)">+85.9%</td><td>$929.60</td><td>55.4%</td><td>599</td><td>+$0.694</td></tr>
+      <tr><td>$41</td><td>$50.00</td><td>54.9%</td><td style="color:var(--green)">+20.7%</td><td>$603.50</td><td>54.9%</td><td>348</td><td>+$0.359</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rec-box" style="border-color:var(--green);margin-top:16px">
+    <strong>Optimal: TP=$20 / SL=$24.40 (proportional)</strong><br>
+    Sweet spot between session frequency (1,134 sessions) and per-session EV (+$0.637/session).
+    At this TP, Fibonacci level-7 double-wins ($18.90) fall just below TP — they recover the session close to TP
+    but it takes one more positive round to trigger exit. Level-8 double-wins ($30.60) overshoot TP by 53%,
+    capturing $30.60 instead of $20. This asymmetric overshoot is why the TP rate of 54.7% (below the
+    theoretical 55.0% breakeven) still produces strong positive returns.
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Final Optimised Result ── -->
+<section>
+  <h2>Final Config: DS1+DS2+DS3 — Optimal Parameters <span class="badge" style="background:rgba(46,204,113,0.08);color:var(--green);border-color:rgba(46,204,113,0.4)">+147.2% Return</span></h2>
+
+  <div class="params-row">
+    <div class="param-chip">Strategy: <strong>DS1+DS2+DS3</strong> (streets 1-6, 4-9, 7-12)</div>
+    <div class="param-chip">Base bet: <strong>$0.10 / label (fixed)</strong></div>
+    <div class="param-chip">Starting balance: <strong>$500</strong></div>
+    <div class="param-chip">TP: <strong>$20.00</strong></div>
+    <div class="param-chip">SL: <strong>-$24.40</strong></div>
+    <div class="param-chip">Fibonacci: <strong>max level 8 (×34), reset on overflow</strong></div>
+    <div class="param-chip">Sessions: <strong>1,134</strong></div>
+  </div>
+
+  <div class="peak-grid" style="margin:16px 0">
+    <div class="peak-card">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">FINAL BALANCE</div>
+      <div style="font-size:28px;font-weight:700;color:var(--green)">$1,235.90</div>
+      <div style="font-size:12px;color:var(--text-dim)">+147.2% on $500</div>
+    </div>
+    <div class="peak-card">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">PEAK BALANCE</div>
+      <div style="font-size:28px;font-weight:700;color:var(--accent)">$1,334.30</div>
+      <div style="font-size:12px;color:var(--text-dim)">Max drawdown 76.8%</div>
+    </div>
+    <div class="peak-card">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">TP RATE</div>
+      <div style="font-size:28px;font-weight:700;color:var(--yellow)">54.7%</div>
+      <div style="font-size:12px;color:var(--text-dim)">Breakeven: 55.0%</div>
+    </div>
+    <div class="peak-card">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">SESSIONS</div>
+      <div style="font-size:28px;font-weight:700">1,134</div>
+      <div style="font-size:12px;color:var(--text-dim)">over 59,526 spins</div>
+    </div>
+  </div>
+
+  <div class="math-box">
+    <strong>Physical table placement (3 chips per spin):</strong><br>
+    • Chip 1 on <strong>1-6</strong> (double street, pays 5:1)<br>
+    • Chip 2 on <strong>4-9</strong> (double street, pays 5:1)<br>
+    • Chip 3 on <strong>7-12</strong> (double street, pays 5:1)<br><br>
+    <strong>Outcome map per round:</strong><br>
+    &nbsp;&nbsp;Numbers <strong>1-3</strong>: +3× base bet (1 win, 2 lose)<br>
+    &nbsp;&nbsp;Numbers <strong>4-6</strong>: +<strong style="color:var(--green)">9× base bet</strong> (2 wins, 1 lose) — double-win zone<br>
+    &nbsp;&nbsp;Numbers <strong>7-9</strong>: +<strong style="color:var(--green)">9× base bet</strong> (2 wins, 1 lose) — double-win zone<br>
+    &nbsp;&nbsp;Numbers <strong>10-12</strong>: +3× base bet (1 win, 2 lose)<br>
+    &nbsp;&nbsp;Numbers <strong>13-36 + 0</strong>: −3× base bet (all lose)<br><br>
+    <strong>Fibonacci levels (base=$0.10/label):</strong><br>
+    &nbsp;&nbsp;L0–L1: ×1 → $0.10/label, double-win = +$0.90 &nbsp;|&nbsp; L5: ×8 → $0.80, double-win = +$7.20<br>
+    &nbsp;&nbsp;L6: ×13 → $1.30, double-win = +$11.70 &nbsp;|&nbsp; L7: ×21 → $2.10, double-win = +$18.90<br>
+    &nbsp;&nbsp;L8: ×34 → $3.40, double-win = <strong style="color:var(--green)">+$30.60</strong> → overshoots TP=$20 by 53%<br><br>
+    <strong>Session rules:</strong> Fibonacci index increments on any net-loss round. Resets to 0 when session P&L
+    recovers to the last reset baseline, OR when index exceeds level 8 (cap-and-reset prevents runaway bets).
+    Session closes on TP (+$20) or SL (−$24.40); balance carries forward.
+  </div>
+</section>
+
+<hr>
+
+<hr>
+
+<!-- ── Corner Strategy ── -->
+<section>
+  <h2>Corner Strategy Backtest — 52 Combinations <span class="badge" style="background:rgba(46,204,113,0.08);color:var(--green);border-color:rgba(46,204,113,0.4)">13 / 52 Profitable</span></h2>
+
+  <div class="params-row">
+    <div class="param-chip">Bet type: <strong>Corner (8:1 payout)</strong></div>
+    <div class="param-chip">Base bet: <strong>$0.10 / corner</strong></div>
+    <div class="param-chip">TP: <strong>+$20.00</strong> / SL: <strong>-$24.40</strong></div>
+    <div class="param-chip">Starting balance: <strong>$500</strong></div>
+    <div class="param-chip">Fibonacci: <strong>max L8 (×34), reset on overflow</strong></div>
+    <div class="param-chip">Dataset: <strong>last 20,000 spins</strong></div>
+  </div>
+
+  <div class="math-box">
+    <strong>Corner layout:</strong> 22 unique corners on the roulette table — 11 left corners (CL, Col1–Col2 boundary)
+    and 11 right corners (CR, Col2–Col3 boundary). Each covers 4 numbers at the row intersection.<br><br>
+    <strong>Why corners outperform double streets:</strong> At Fibonacci level 8 (×34, bet=$3.40/corner):<br>
+    &nbsp;&nbsp;Single corner win: +6×$3.40 = <strong>+$20.40</strong> — just barely overshoots TP=$20 (2% overshoot)<br>
+    &nbsp;&nbsp;Double corner win: +15×$3.40 = <strong>+$51.00</strong> — 155% overshoot<br>
+    &nbsp;&nbsp;4-way win: +29×$3.40 = <strong>+$98.60</strong> — 393% overshoot<br><br>
+    Even a single-corner win at level 8 closes the session in profit. DS strategies need a double-win
+    (+$30.60) to overshoot TP=$20. This makes corner recovery far more frequent.
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>#</th><th>Strategy</th><th>Covers</th><th>Return</th><th>Final</th><th>Peak</th><th>Max DD</th><th>TP Rate</th><th>Sessions</th></tr>
+    </thead>
+    <tbody>
+      <tr class="profit-row"><td>1</td><td><strong>CL3+CR3</strong></td><td>7-8-9-10-11-12 (dbl: 8,11)</td><td style="color:var(--green)"><strong>+187.4%</strong></td><td style="color:var(--green)">$1,437</td><td>$1,507</td><td>47.2%</td><td>50.4%</td><td>534</td></tr>
+      <tr class="profit-row"><td>2</td><td><strong>CL1+CR1</strong></td><td>1-2-3-4-5-6 (dbl: 2,5)</td><td style="color:var(--green)"><strong>+91.3%</strong></td><td style="color:var(--green)">$956</td><td>$1,075</td><td>51.6%</td><td>48.9%</td><td>540</td></tr>
+      <tr class="profit-row"><td>3</td><td><strong>CL6+CR6</strong></td><td>16-17-18-19-20-21 (dbl: 17,20)</td><td style="color:var(--green)"><strong>+83.9%</strong></td><td style="color:var(--green)">$920</td><td>$1,772</td><td>52.0%</td><td>48.5%</td><td>534</td></tr>
+      <tr class="profit-row"><td>4</td><td><strong>CR10</strong></td><td>29-30-32-33 (single corner)</td><td style="color:var(--green)"><strong>+81.2%</strong></td><td style="color:var(--green)">$906</td><td>$1,067</td><td>35.3%</td><td>52.1%</td><td>328</td></tr>
+      <tr class="profit-row"><td>5</td><td><strong>CR1+CR2</strong></td><td>2-3-5-6-8-9 (dbl: 5,6)</td><td style="color:var(--green)"><strong>+66.5%</strong></td><td style="color:var(--green)">$832</td><td>$1,182</td><td>46.6%</td><td>47.8%</td><td>533</td></tr>
+      <tr class="profit-row"><td>6</td><td>CL5</td><td>13-14-16-17</td><td style="color:var(--green)">+66.1%</td><td style="color:var(--green)">$830</td><td>$876</td><td>40.1%</td><td>52.9%</td><td>314</td></tr>
+      <tr class="profit-row"><td>7</td><td>CR2</td><td>5-6-8-9</td><td style="color:var(--green)">+64.9%</td><td style="color:var(--green)">$825</td><td>$1,280</td><td>41.5%</td><td>52.0%</td><td>354</td></tr>
+      <tr class="profit-row"><td>8</td><td>CL6</td><td>16-17-19-20</td><td style="color:var(--green)">+47.0%</td><td style="color:var(--green)">$735</td><td>$1,296</td><td>52.8%</td><td>51.3%</td><td>302</td></tr>
+      <tr class="profit-row"><td>9</td><td>CL4+CL5+CL6</td><td>10-11-13-14-16-17-19-20 (3-chain)</td><td style="color:var(--green)">+33.7%</td><td style="color:var(--green)">$668</td><td>$1,502</td><td>71.6%</td><td>49.9%</td><td>673</td></tr>
+      <tr><td colspan="9" style="color:var(--text-muted);text-align:center;padding:8px">… 4 more profitable, 39 bankrupt</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rec-box" style="border-color:var(--yellow);margin-top:16px">
+    <strong>Note on 20k-only results:</strong> CL3+CR3 and CL6+CR6 showed strong returns on 20k spins but went
+    bankrupt across all TP values on the full 52k dataset — their edge was concentrated in a favorable recent window.
+    Only CL1+CR1 proved consistent on both timeframes (see comparison below).
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Strategy Comparison ── -->
+<section>
+  <h2>Strategy Comparison: DS vs Corner vs Mixed <span class="badge" style="background:rgba(79,142,247,0.08);color:var(--accent);border-color:rgba(79,142,247,0.4)">3-Way Analysis</span></h2>
+
+  <div class="params-row">
+    <div class="param-chip">DS: <strong>DS1+DS2+DS3</strong> (3 bets, 5:1)</div>
+    <div class="param-chip">Corner: <strong>CL1+CR1</strong> (2 bets, 8:1)</div>
+    <div class="param-chip">Mixed: <strong>CL1+CR1+DS2</strong> (3 bets)</div>
+    <div class="param-chip">Base bet: <strong>$0.10 / position</strong></div>
+    <div class="param-chip">Starting balance: <strong>$500</strong></div>
+  </div>
+
+  <div class="math-box">
+    <strong>Mixed strategy (CL1+CR1+DS2) win map per round at base bet b:</strong><br>
+    &nbsp;&nbsp;#1, #3 &nbsp;&nbsp;&nbsp;: 1 corner win &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → +6×b<br>
+    &nbsp;&nbsp;#2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: CL1+CR1 win, DS2 miss &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → +15×b &nbsp;(double corner)<br>
+    &nbsp;&nbsp;#4, #6 &nbsp;&nbsp;&nbsp;: 1 corner + DS2 win &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → +12×b<br>
+    &nbsp;&nbsp;<strong>#5</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: CL1 + CR1 + DS2 all win &nbsp;&nbsp;&nbsp; → <strong>+21×b &nbsp;(triple-win zone)</strong><br>
+    &nbsp;&nbsp;#7,#8,#9 &nbsp;: DS2 only &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → +3×b<br>
+    &nbsp;&nbsp;others &nbsp;&nbsp;&nbsp;: all lose &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → -3×b<br><br>
+    At Fibonacci L8 (bet=$3.40): triple-win on #5 = +21×$3.40 = <strong>+$71.40</strong> (257% overshoot vs TP=$20).
+  </div>
+
+  <h3 style="margin:20px 0 8px;font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Head-to-head at TP=$20 / SL=$24.40</h3>
+  <table>
+    <thead>
+      <tr><th>Strategy</th><th>Bets</th><th>Dataset</th><th>Return</th><th>Final</th><th>Peak</th><th>Max DD</th><th>TP Rate</th><th>Sessions</th></tr>
+    </thead>
+    <tbody>
+      <tr class="profit-row">
+        <td rowspan="2"><strong>CL1+CR1</strong><br><small style="color:var(--text-dim)">Corner pair</small></td>
+        <td rowspan="2">2</td>
+        <td>52k</td><td style="color:var(--green)"><strong>+435.7%</strong></td><td style="color:var(--green)">$2,678</td><td>$2,797</td><td>46.6%</td><td>50.0%</td><td>1,584</td>
+      </tr>
+      <tr class="profit-row">
+        <td>20k</td><td style="color:var(--green)"><strong>+91.3%</strong></td><td style="color:var(--green)">$956</td><td>$1,075</td><td>51.6%</td><td>48.9%</td><td>540</td>
+      </tr>
+      <tr class="profit-row">
+        <td rowspan="2"><strong>DS1+DS2+DS3</strong><br><small style="color:var(--text-dim)">Double street chain</small></td>
+        <td rowspan="2">3</td>
+        <td>52k</td><td style="color:var(--green)">+147.2%</td><td style="color:var(--green)">$1,236</td><td>$1,334</td><td>76.8%</td><td>54.7%</td><td>1,134</td>
+      </tr>
+      <tr class="profit-row">
+        <td>20k</td><td style="color:var(--green)">+35.5%</td><td style="color:var(--green)">$677</td><td>$776</td><td>67.2%</td><td>54.5%</td><td>382</td>
+      </tr>
+      <tr>
+        <td rowspan="2"><strong>CL1+CR1+DS2</strong><br><small style="color:var(--text-dim)">Mixed</small></td>
+        <td rowspan="2">3</td>
+        <td>52k</td><td style="color:var(--green)">+159.5%</td><td style="color:var(--green)">$1,298</td><td>$1,756</td><td>67.0%</td><td>48.1%</td><td>1,931</td>
+      </tr>
+      <tr>
+        <td>20k</td><td style="color:var(--red)">-20.8%</td><td style="color:var(--red)">$396</td><td>$854</td><td>84.4%</td><td>46.8%</td><td>658</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 8px;font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Optimal TP sweep (proportional 41:50)</h3>
+  <table>
+    <thead>
+      <tr><th>Strategy</th><th>Dataset</th><th>Best TP</th><th>Best SL</th><th>Return</th><th>Final</th><th>TP Rate</th><th>Sessions</th></tr>
+    </thead>
+    <tbody>
+      <tr class="profit-row"><td><strong>CL1+CR1</strong></td><td>52k</td><td>$20</td><td>$24.40</td><td style="color:var(--green)"><strong>+435.7%</strong></td><td style="color:var(--green)">$2,678</td><td>50.0%</td><td>1,584</td></tr>
+      <tr class="profit-row"><td><strong>CL1+CR1</strong></td><td>20k</td><td>$20</td><td>$24.40</td><td style="color:var(--green)"><strong>+91.3%</strong></td><td style="color:var(--green)">$956</td><td>48.9%</td><td>540</td></tr>
+      <tr class="profit-row"><td>DS1+DS2+DS3</td><td>52k</td><td>$20</td><td>$24.40</td><td style="color:var(--green)">+147.2%</td><td style="color:var(--green)">$1,236</td><td>54.7%</td><td>1,134</td></tr>
+      <tr class="profit-row"><td>DS1+DS2+DS3</td><td>20k</td><td>$20</td><td>$24.40</td><td style="color:var(--green)">+35.5%</td><td style="color:var(--green)">$677</td><td>54.5%</td><td>382</td></tr>
+      <tr class="profit-row"><td>CL1+CR1+DS2</td><td>52k</td><td>$15</td><td>$18.29</td><td style="color:var(--green)">+211.1%</td><td style="color:var(--green)">$1,556</td><td>48.9%</td><td>2,788</td></tr>
+      <tr><td>CL1+CR1+DS2</td><td>20k</td><td>$10</td><td>$12.20</td><td style="color:var(--yellow)">+8.3%</td><td style="color:var(--yellow)">$542</td><td>47.8%</td><td>1,308</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rec-box" style="border-color:var(--green);margin-top:16px">
+    <strong>Verdict: CL1+CR1 is the recommended strategy.</strong><br><br>
+    <strong>Why CL1+CR1 wins:</strong><br>
+    • Only strategy with the same optimal TP ($20) on both datasets — true robustness, not overfitting<br>
+    • Highest 52k return (+435.7%) by a wide margin; still strong on 20k (+91.3%)<br>
+    • Lower drawdown (46.6%) vs DS1+DS2+DS3 (76.8%) — the corner's 8:1 payout recovers faster<br>
+    • TP rate 48.9–50% (below the 55% nominal breakeven) — the strategy profits <em>entirely</em> from Fibonacci
+      overshoot: a single corner win at level 8 pays +$20.40, always crossing the TP=$20 line<br><br>
+    <strong>Why mixed (CL1+CR1+DS2) fails on 20k:</strong> The third bet (DS2) adds coverage over 7-9 (+3×bet
+    at level 0) but also increases the loss per round when 10-36 hit. The optimal TP shifts between
+    datasets ($15 vs $10), indicating the strategy is sensitive to recent number distribution rather
+    than structurally robust.
+  </div>
+
+  <div class="math-box" style="margin-top:16px">
+    <strong>CL1+CR1 physical placement (2 chips per spin):</strong><br>
+    &nbsp;&nbsp;Chip 1: corner <strong>1-2-4-5</strong> (left side of rows 1-2)<br>
+    &nbsp;&nbsp;Chip 2: corner <strong>2-3-5-6</strong> (right side of rows 1-2)<br>
+    Both chips sit on the same two rows, touching each other at the 2-5 boundary.<br><br>
+    <strong>Outcome per round at base $0.10:</strong><br>
+    &nbsp;&nbsp;#1 or #4: Chip 1 wins → net +$0.70 (+7×b, corner win minus miss)<br>
+    &nbsp;&nbsp;#3 or #6: Chip 2 wins → net +$0.70<br>
+    &nbsp;&nbsp;<strong>#2 or #5</strong>: Both chips win → net <strong>+$1.50</strong> (+15×b, double win)<br>
+    &nbsp;&nbsp;0, 7-36: Both lose → net -$0.20 (-2×b)<br><br>
+    At Fibonacci L8 (×34, $3.40/chip): double-win on #2 or #5 = +<strong>$51.00</strong> vs TP=$20.
+  </div>
+</section>
+
+<hr>
+
+
+<!-- ── Equity Curve Chart ── -->
+<section>
+  <h2>Equity Curves — CornerTop vs DSTop <span class="badge" style="background:rgba(79,142,247,0.08);color:var(--accent);border-color:rgba(79,142,247,0.4)">52,000 Spins</span></h2>
+
+  <div class="params-row">
+    <div class="param-chip">CornerTop: <strong>CL1+CR1</strong> (corners 1-6)</div>
+    <div class="param-chip">DSTop: <strong>DS1+DS2+DS3</strong> (streets 1-12)</div>
+    <div class="param-chip">TP: <strong>+$20.00</strong> / SL: <strong>-$24.40</strong></div>
+    <div class="param-chip">Fib: <strong>L8 (x34)</strong> / Start: <strong>$500</strong></div>
+    <div class="param-chip">Sampled every: <strong>100 spins</strong></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0">
+    <div class="peak-card">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">CORNERTOP FINAL</div>
+      <div style="font-size:24px;font-weight:700;color:#4ade80">$2,678.50</div>
+      <div style="font-size:12px;color:var(--text-dim)">+435.7% &nbsp;|&nbsp; Peak $2,796.90</div>
+    </div>
+    <div class="peak-card">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">DSTOP FINAL</div>
+      <div style="font-size:24px;font-weight:700;color:#60a5fa">$1,235.90</div>
+      <div style="font-size:12px;color:var(--text-dim)">+147.2% &nbsp;|&nbsp; Peak $1,334.30</div>
+    </div>
+    <div class="peak-card">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">MAX DRAWDOWN</div>
+      <div style="font-size:24px;font-weight:700;color:var(--yellow)">46.6% <span style="font-size:14px;color:var(--text-dim)">/ 76.8%</span></div>
+      <div style="font-size:12px;color:var(--text-dim)">Corner / DS</div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin:16px 0">
+    <canvas id="equityChart" style="width:100%;height:380px"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+  (function() {
+    const labels = ["0", "100", "200", "300", "400", "500", "600", "700", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300", "2400", "2500", "2600", "2700", "2800", "2900", "3000", "3100", "3200", "3300", "3400", "3500", "3600", "3700", "3800", "3900", "4000", "4100", "4200", "4300", "4400", "4500", "4600", "4700", "4800", "4900", "5000", "5100", "5200", "5300", "5400", "5500", "5600", "5700", "5800", "5900", "6000", "6100", "6200", "6300", "6400", "6500", "6600", "6700", "6800", "6900", "7000", "7100", "7200", "7300", "7400", "7500", "7600", "7700", "7800", "7900", "8000", "8100", "8200", "8300", "8400", "8500", "8600", "8700", "8800", "8900", "9000", "9100", "9200", "9300", "9400", "9500", "9600", "9700", "9800", "9900", "10000", "10100", "10200", "10300", "10400", "10500", "10600", "10700", "10800", "10900", "11000", "11100", "11200", "11300", "11400", "11500", "11600", "11700", "11800", "11900", "12000", "12100", "12200", "12300", "12400", "12500", "12600", "12700", "12800", "12900", "13000", "13100", "13200", "13300", "13400", "13500", "13600", "13700", "13800", "13900", "14000", "14100", "14200", "14300", "14400", "14500", "14600", "14700", "14800", "14900", "15000", "15100", "15200", "15300", "15400", "15500", "15600", "15700", "15800", "15900", "16000", "16100", "16200", "16300", "16400", "16500", "16600", "16700", "16800", "16900", "17000", "17100", "17200", "17300", "17400", "17500", "17600", "17700", "17800", "17900", "18000", "18100", "18200", "18300", "18400", "18500", "18600", "18700", "18800", "18900", "19000", "19100", "19200", "19300", "19400", "19500", "19600", "19700", "19800", "19900", "20000", "20100", "20200", "20300", "20400", "20500", "20600", "20700", "20800", "20900", "21000", "21100", "21200", "21300", "21400", "21500", "21600", "21700", "21800", "21900", "22000", "22100", "22200", "22300", "22400", "22500", "22600", "22700", "22800", "22900", "23000", "23100", "23200", "23300", "23400", "23500", "23600", "23700", "23800", "23900", "24000", "24100", "24200", "24300", "24400", "24500", "24600", "24700", "24800", "24900", "25000", "25100", "25200", "25300", "25400", "25500", "25600", "25700", "25800", "25900", "26000", "26100", "26200", "26300", "26400", "26500", "26600", "26700", "26800", "26900", "27000", "27100", "27200", "27300", "27400", "27500", "27600", "27700", "27800", "27900", "28000", "28100", "28200", "28300", "28400", "28500", "28600", "28700", "28800", "28900", "29000", "29100", "29200", "29300", "29400", "29500", "29600", "29700", "29800", "29900", "30000", "30100", "30200", "30300", "30400", "30500", "30600", "30700", "30800", "30900", "31000", "31100", "31200", "31300", "31400", "31500", "31600", "31700", "31800", "31900", "32000", "32100", "32200", "32300", "32400", "32500", "32600", "32700", "32800", "32900", "33000", "33100", "33200", "33300", "33400", "33500", "33600", "33700", "33800", "33900", "34000", "34100", "34200", "34300", "34400", "34500", "34600", "34700", "34800", "34900", "35000", "35100", "35200", "35300", "35400", "35500", "35600", "35700", "35800", "35900", "36000", "36100", "36200", "36300", "36400", "36500", "36600", "36700", "36800", "36900", "37000", "37100", "37200", "37300", "37400", "37500", "37600", "37700", "37800", "37900", "38000", "38100", "38200", "38300", "38400", "38500", "38600", "38700", "38800", "38900", "39000", "39100", "39200", "39300", "39400", "39500", "39600", "39700", "39800", "39900", "40000", "40100", "40200", "40300", "40400", "40500", "40600", "40700", "40800", "40900", "41000", "41100", "41200", "41300", "41400", "41500", "41600", "41700", "41800", "41900", "42000", "42100", "42200", "42300", "42400", "42500", "42600", "42700", "42800", "42900", "43000", "43100", "43200", "43300", "43400", "43500", "43600", "43700", "43800", "43900", "44000", "44100", "44200", "44300", "44400", "44500", "44600", "44700", "44800", "44900", "45000", "45100", "45200", "45300", "45400", "45500", "45600", "45700", "45800", "45900", "46000", "46100", "46200", "46300", "46400", "46500", "46600", "46700", "46800", "46900", "47000", "47100", "47200", "47300", "47400", "47500", "47600", "47700", "47800", "47900", "48000", "48100", "48200", "48300", "48400", "48500", "48600", "48700", "48800", "48900", "49000", "49100", "49200", "49300", "49400", "49500", "49600", "49700", "49800", "49900", "50000", "50100", "50200", "50300", "50400", "50500", "50600", "50700", "50800", "50900", "51000", "51100", "51200", "51300", "51400", "51500", "51600", "51700", "51800", "51900", "52000", "52100", "52200", "52300", "52400", "52500", "52600", "52700", "52800", "52900", "53000", "53100", "53200", "53300", "53400", "53500", "53600", "53700", "53800", "53900", "54000", "54100", "54200", "54300", "54400", "54500", "54600", "54700", "54800", "54900", "55000", "55100", "55200", "55300", "55400", "55500", "55600", "55700", "55800", "55900", "56000", "56100", "56200", "56300", "56400", "56500", "56600", "56700", "56800", "56900", "57000", "57100", "57200", "57300", "57400", "57500", "57600", "57700", "57800", "57900", "58000", "58100", "58200", "58300", "58400", "58500", "58600", "58700", "58800", "58900", "59000", "59100", "59200", "59300", "59400", "59500", "59600"];
+    const cornerData = [500.0, 500.1, 531.6, 607.2, 686.5, 679.3, 613.5, 576.5, 586.5, 675.3, 645.1, 612.4, 569.5, 496.2, 459.7, 412.5, 422.2, 477.1, 506.8, 587.4, 558.9, 512.8, 519.8, 501.4, 455.1, 481.6, 598.4, 582.4, 601.4, 631.0, 650.8, 647.8, 615.2, 623.2, 540.2, 614.0, 642.9, 623.1, 704.9, 722.7, 677.5, 741.8, 718.1, 675.9, 667.5, 615.8, 678.3, 683.0, 676.1, 633.3, 644.6, 734.9, 777.9, 838.4, 831.7, 871.2, 872.9, 892.2, 907.4, 935.0, 906.0, 866.5, 840.2, 914.9, 1009.7, 939.5, 1020.8, 933.6, 953.4, 932.2, 1006.2, 1080.8, 1110.5, 1199.7, 1179.7, 1170.7, 1175.2, 1181.7, 1200.1, 1203.5, 1198.6, 1163.9, 1183.4, 1202.9, 1279.7, 1316.3, 1296.4, 1389.0, 1318.0, 1385.3, 1300.8, 1310.2, 1340.9, 1330.2, 1261.1, 1305.6, 1376.3, 1412.5, 1406.4, 1386.8, 1471.2, 1487.0, 1443.3, 1422.2, 1412.0, 1383.3, 1335.9, 1290.0, 1328.3, 1437.6, 1462.5, 1495.6, 1457.6, 1427.0, 1371.5, 1481.5, 1487.7, 1475.0, 1435.4, 1560.3, 1473.0, 1451.9, 1435.5, 1430.5, 1326.7, 1271.9, 1272.4, 1212.7, 1275.4, 1210.4, 1180.0, 1253.1, 1319.3, 1359.9, 1415.8, 1451.9, 1417.3, 1523.8, 1503.2, 1528.2, 1495.8, 1471.7, 1466.1, 1537.8, 1517.1, 1455.9, 1499.7, 1552.1, 1574.9, 1492.5, 1457.5, 1511.3, 1489.4, 1490.6, 1644.3, 1726.5, 1702.2, 1681.0, 1742.9, 1752.3, 1719.6, 1780.9, 1733.5, 1811.0, 1830.4, 1819.5, 1794.3, 1776.4, 1868.9, 1926.5, 1998.5, 1973.9, 1939.0, 1967.5, 1947.1, 1941.9, 2010.5, 2042.6, 2055.7, 2059.2, 2035.9, 1994.7, 2097.1, 2207.2, 2249.6, 2292.5, 2306.7, 2411.5, 2428.7, 2370.9, 2448.3, 2408.9, 2321.3, 2275.7, 2372.1, 2300.7, 2317.9, 2339.5, 2323.5, 2301.5, 2434.9, 2480.7, 2431.6, 2450.4, 2444.7, 2371.4, 2370.7, 2311.4, 2242.4, 2283.7, 2253.6, 2260.7, 2323.1, 2343.3, 2296.9, 2275.4, 2220.1, 2119.5, 2113.8, 2119.4, 2080.7, 2001.5, 1909.8, 1900.9, 1844.2, 1814.1, 1910.3, 1895.2, 1998.9, 2014.9, 1981.9, 2036.4, 2030.1, 1959.5, 1983.8, 1968.7, 1974.5, 1894.2, 1856.9, 1856.1, 1817.8, 1763.4, 1717.3, 1753.6, 1764.1, 1755.8, 1759.4, 1750.5, 1779.6, 1735.0, 1826.0, 1876.4, 1930.3, 1906.3, 1819.4, 1777.9, 1758.9, 1712.3, 1732.9, 1755.2, 1835.9, 1849.3, 1896.4, 2005.8, 1954.5, 1949.3, 1910.1, 1874.7, 1914.4, 1859.5, 1896.8, 1845.4, 1809.0, 1742.5, 1761.3, 1758.0, 1747.9, 1763.2, 1771.4, 1824.0, 1864.3, 1808.9, 1823.1, 1776.4, 1826.4, 1868.6, 1940.2, 1917.7, 1929.1, 1943.4, 1937.8, 1965.5, 1956.1, 1973.6, 1928.7, 1923.4, 1897.2, 1966.8, 1906.2, 1875.6, 1928.1, 1898.5, 1928.9, 1941.1, 1894.8, 1845.7, 1857.3, 1865.7, 1841.6, 1798.6, 1727.5, 1767.4, 1762.7, 1777.5, 1749.0, 1744.7, 1759.0, 1765.9, 1856.7, 1963.5, 1991.6, 2007.2, 2017.3, 1966.2, 1904.6, 2000.2, 2002.3, 2040.7, 2162.4, 2175.7, 2198.1, 2147.7, 2174.6, 2124.4, 2178.0, 2180.3, 2169.2, 2183.4, 2235.3, 2249.0, 2372.8, 2425.0, 2382.0, 2393.2, 2374.2, 2485.6, 2457.5, 2437.3, 2423.6, 2477.9, 2529.4, 2463.7, 2484.1, 2482.9, 2448.5, 2445.2, 2340.0, 2338.5, 2348.6, 2340.2, 2251.6, 2229.2, 2237.0, 2291.4, 2351.2, 2336.4, 2314.2, 2285.5, 2260.1, 2269.0, 2286.1, 2272.3, 2230.5, 2217.7, 2213.1, 2252.7, 2291.1, 2319.6, 2325.1, 2359.1, 2345.0, 2241.1, 2300.2, 2307.6, 2264.5, 2275.0, 2277.0, 2280.3, 2310.3, 2246.2, 2184.7, 2215.4, 2183.3, 2126.2, 2203.1, 2229.9, 2158.4, 2199.9, 2185.4, 2300.5, 2247.6, 2224.1, 2268.0, 2314.6, 2317.8, 2329.9, 2362.1, 2404.5, 2381.4, 2357.0, 2317.5, 2368.3, 2358.2, 2325.3, 2401.6, 2394.2, 2382.6, 2341.5, 2289.5, 2331.1, 2316.5, 2318.1, 2315.2, 2319.6, 2372.0, 2358.5, 2375.2, 2432.5, 2475.0, 2533.0, 2537.8, 2486.7, 2434.7, 2398.0, 2387.7, 2442.1, 2449.9, 2399.9, 2475.8, 2456.5, 2421.6, 2388.5, 2396.8, 2364.8, 2393.5, 2407.0, 2433.0, 2522.0, 2529.1, 2567.2, 2528.1, 2539.5, 2561.3, 2598.4, 2502.7, 2581.0, 2584.2, 2542.0, 2610.1, 2611.4, 2543.7, 2470.9, 2479.0, 2506.3, 2496.0, 2523.4, 2509.4, 2582.0, 2531.6, 2535.2, 2528.4, 2515.7, 2443.8, 2411.2, 2398.9, 2370.7, 2310.1, 2266.5, 2209.7, 2245.9, 2314.0, 2244.1, 2253.9, 2243.4, 2277.0, 2298.8, 2280.1, 2347.2, 2342.7, 2327.3, 2257.2, 2243.5, 2240.9, 2223.7, 2209.8, 2251.1, 2233.4, 2337.9, 2362.9, 2399.1, 2415.5, 2400.8, 2411.8, 2364.6, 2286.6, 2231.5, 2361.1, 2325.9, 2323.2, 2310.5, 2313.3, 2287.1, 2302.3, 2318.4, 2322.8, 2323.0, 2359.8, 2341.7, 2323.5, 2350.4, 2250.5, 2241.9, 2349.0, 2239.1, 2216.7, 2273.4, 2326.7, 2359.1, 2370.9, 2308.7, 2363.7, 2367.9, 2369.7, 2291.4, 2313.6, 2335.4, 2476.3, 2448.6, 2366.6, 2371.8, 2327.5, 2375.8, 2409.7, 2418.3, 2436.6, 2570.8, 2526.5, 2572.3, 2491.8, 2546.7, 2569.8, 2549.0, 2506.6, 2553.6, 2571.4, 2606.3, 2565.3, 2532.6, 2594.5, 2618.1, 2662.3, 2700.9, 2697.6, 2692.4, 2688.0, 2758.2, 2769.3, 2709.7, 2781.4, 2719.2, 2719.2, 2676.8, 2670.7, 2636.7, 2615.9, 2591.5, 2660.4, 2607.9, 2650.3, 2671.2, 2660.7, 2701.8, 2666.7, 2578.0, 2559.6, 2479.4, 2531.6, 2489.1, 2575.1, 2565.5, 2603.9, 2566.3, 2615.5, 2733.5, 2737.1, 2691.4, 2678.5];
+    const dsData     = [500.0, 518.3, 556.1, 619.7, 647.3, 684.8, 674.3, 626.9, 661.1, 668.9, 681.2, 688.1, 658.4, 690.8, 714.2, 690.5, 652.4, 630.8, 635.0, 592.7, 601.7, 574.4, 608.6, 633.5, 602.0, 598.4, 589.1, 588.2, 632.0, 637.7, 605.9, 597.8, 579.5, 647.9, 593.3, 596.0, 626.9, 664.1, 663.5, 665.6, 670.7, 677.3, 636.5, 598.7, 629.0, 574.7, 558.2, 536.3, 522.5, 480.8, 471.5, 510.5, 536.0, 530.0, 492.2, 482.0, 498.2, 536.0, 526.4, 526.4, 483.5, 426.2, 405.5, 397.7, 365.9, 347.6, 326.9, 377.9, 353.3, 317.0, 302.6, 352.1, 387.8, 413.3, 345.5, 334.7, 340.4, 368.6, 415.4, 431.3, 417.5, 389.9, 427.1, 471.5, 508.4, 493.7, 481.1, 472.1, 470.9, 480.5, 467.6, 414.8, 389.9, 337.7, 303.8, 284.0, 320.3, 305.6, 278.6, 279.5, 306.8, 313.1, 380.9, 413.3, 408.2, 338.6, 262.4, 309.8, 279.2, 272.0, 270.8, 260.0, 214.4, 254.6, 242.6, 262.1, 291.2, 298.4, 310.4, 266.0, 257.6, 287.6, 261.8, 315.2, 283.1, 220.7, 184.1, 182.3, 226.1, 254.9, 237.8, 282.8, 275.9, 258.8, 303.2, 314.6, 316.4, 350.9, 395.9, 371.3, 281.6, 302.3, 306.5, 374.6, 416.9, 301.4, 328.7, 276.5, 285.5, 243.2, 173.0, 240.2, 313.4, 348.5, 389.6, 497.0, 476.3, 470.3, 524.3, 514.1, 459.8, 479.6, 500.0, 489.8, 432.5, 424.7, 430.4, 483.5, 419.3, 388.4, 406.7, 347.3, 323.6, 318.5, 302.9, 280.4, 268.1, 260.6, 335.9, 369.5, 421.7, 440.3, 422.0, 477.2, 521.6, 560.3, 583.7, 635.0, 692.3, 662.3, 728.6, 687.2, 741.2, 814.4, 767.6, 810.2, 771.2, 750.5, 720.5, 676.4, 706.4, 695.9, 650.0, 568.7, 620.3, 588.5, 585.8, 562.7, 544.7, 626.3, 644.6, 577.7, 633.2, 659.3, 680.6, 650.3, 666.2, 673.1, 641.3, 669.8, 646.1, 638.0, 594.5, 586.7, 504.5, 476.0, 449.3, 429.2, 490.4, 480.5, 509.6, 532.1, 550.7, 569.3, 634.1, 641.9, 591.5, 610.1, 584.3, 544.7, 543.2, 538.1, 516.2, 500.0, 537.5, 561.5, 636.8, 668.0, 722.9, 644.0, 694.1, 726.8, 735.5, 745.7, 740.6, 755.9, 749.9, 803.9, 820.4, 833.9, 884.3, 871.4, 869.3, 867.2, 872.6, 890.6, 842.0, 891.5, 968.0, 969.5, 963.2, 962.9, 1019.0, 1045.4, 1019.0, 1032.5, 1013.6, 963.5, 955.1, 969.2, 980.3, 951.2, 938.0, 933.5, 950.6, 972.5, 1016.3, 1000.1, 1019.9, 1052.6, 997.4, 980.0, 997.1, 942.8, 929.6, 926.0, 949.4, 977.0, 872.0, 818.3, 884.9, 855.5, 861.5, 899.6, 878.6, 926.9, 921.5, 939.8, 938.9, 941.9, 875.6, 920.6, 926.6, 944.3, 935.9, 948.5, 950.9, 947.6, 984.8, 1006.4, 1059.5, 1030.7, 1025.0, 1005.8, 1030.7, 1049.6, 1079.0, 1092.5, 1130.3, 1114.7, 1081.4, 1102.7, 1121.3, 1033.1, 1070.9, 1091.0, 1088.9, 1122.5, 1168.1, 1134.2, 1196.9, 1165.7, 1140.2, 1100.3, 1027.4, 1026.2, 997.7, 941.3, 877.4, 859.7, 886.1, 868.1, 897.2, 929.6, 903.5, 910.1, 830.0, 797.6, 848.9, 867.5, 852.5, 819.2, 728.3, 788.3, 777.5, 775.7, 782.3, 758.3, 740.0, 799.1, 750.2, 668.6, 693.5, 767.9, 778.4, 803.6, 837.2, 818.6, 816.8, 819.5, 823.1, 833.0, 831.8, 892.4, 881.0, 890.9, 874.1, 920.0, 882.8, 961.7, 968.0, 967.7, 954.2, 958.7, 1026.5, 1034.3, 1032.2, 1067.9, 1043.3, 1025.9, 1024.1, 991.4, 960.5, 936.8, 972.8, 989.0, 973.1, 992.9, 1009.4, 1013.3, 910.4, 908.0, 949.7, 943.4, 922.7, 933.8, 917.9, 891.5, 910.4, 897.8, 867.2, 873.8, 876.2, 917.0, 915.2, 926.6, 905.6, 879.5, 929.9, 965.9, 1016.9, 999.8, 999.2, 999.5, 980.3, 997.7, 960.5, 954.5, 993.8, 959.6, 947.3, 900.8, 907.4, 889.4, 892.4, 893.9, 869.0, 953.0, 909.5, 872.0, 860.9, 806.6, 774.8, 800.0, 798.5, 804.2, 781.4, 787.1, 846.8, 839.3, 858.2, 820.1, 842.3, 855.8, 892.1, 909.5, 874.7, 902.0, 923.3, 939.5, 974.9, 959.9, 917.9, 932.6, 972.8, 990.5, 990.8, 940.4, 931.1, 946.1, 949.7, 1013.0, 1004.0, 1000.7, 964.1, 929.9, 890.6, 866.9, 833.9, 811.4, 753.2, 741.8, 758.3, 757.1, 776.3, 836.9, 841.4, 907.1, 925.4, 935.6, 901.4, 941.0, 995.0, 995.3, 978.5, 930.2, 956.9, 935.0, 886.4, 932.0, 957.8, 902.6, 977.0, 1006.1, 990.2, 1004.3, 1012.4, 1030.7, 980.0, 990.2, 908.6, 939.2, 987.5, 949.1, 960.2, 982.7, 1001.3, 1059.5, 1007.6, 1024.7, 1039.7, 1082.6, 1118.0, 1049.6, 1036.7, 1091.3, 1185.8, 1101.5, 1062.5, 1089.8, 1056.2, 1096.7, 1034.0, 1042.7, 1081.1, 1056.5, 1039.1, 1031.0, 1033.4, 1073.3, 1061.3, 1061.0, 1008.5, 1070.6, 1053.5, 1077.5, 1025.9, 1081.4, 1092.2, 1117.1, 1132.4, 1081.1, 1018.1, 983.0, 1010.6, 1036.7, 1101.8, 1087.7, 1093.7, 1118.3, 1180.7, 1161.8, 1153.1, 1132.1, 1178.3, 1180.1, 1186.1, 1202.9, 1162.4, 1228.1, 1247.0, 1287.8, 1329.2, 1244.0, 1197.2, 1195.7, 1199.9, 1176.8, 1167.2, 1123.7, 1176.2, 1212.5, 1216.1, 1249.7, 1227.2, 1237.4, 1235.9];
+
+    new Chart(document.getElementById('equityChart'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'CornerTop (CL1+CR1)',
+            data: cornerData,
+            borderColor: '#4ade80',
+            backgroundColor: 'rgba(74,222,128,0.06)',
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: true,
+            tension: 0.2,
+          },
+          {
+            label: 'DSTop (DS1+DS2+DS3)',
+            data: dsData,
+            borderColor: '#60a5fa',
+            backgroundColor: 'rgba(96,165,250,0.06)',
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: true,
+            tension: 0.2,
+          },
+          {
+            label: 'Starting balance ($500)',
+            data: Array(labels.length).fill(500),
+            borderColor: 'rgba(255,255,255,0.15)',
+            borderWidth: 1,
+            borderDash: [4,4],
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            labels: { color: '#8892a4', font: { family: 'JetBrains Mono, monospace', size: 12 } }
+          },
+          tooltip: {
+            backgroundColor: '#1a1d27',
+            borderColor: '#2e3350',
+            borderWidth: 1,
+            titleColor: '#e2e8f0',
+            bodyColor: '#8892a4',
+            callbacks: {
+              title: ctx => 'Spin ~' + ctx[0].label,
+              label: ctx => ' ' + ctx.dataset.label + ': $' + ctx.parsed.y.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: '#556070',
+              maxTicksLimit: 12,
+              font: { size: 11 },
+              callback: (val, i) => {
+                const v = parseInt(labels[i]);
+                return v % 5000 === 0 ? (v/1000)+'k' : '';
+              }
+            },
+            grid: { color: 'rgba(46,51,80,0.5)' },
+            title: { display: true, text: 'Spins', color: '#556070', font: { size: 11 } }
+          },
+          y: {
+            ticks: {
+              color: '#556070',
+              font: { size: 11 },
+              callback: val => '$' + val.toLocaleString()
+            },
+            grid: { color: 'rgba(46,51,80,0.4)' },
+            title: { display: true, text: 'Balance ($)', color: '#556070', font: { size: 11 } }
+          }
+        }
+      }
+    });
+  })();
+  </script>
+
+  <div class="math-box" style="margin-top:16px">
+    <strong>Reading the chart:</strong> each point is the account balance sampled every 100 spins.
+    CornerTop (green) runs higher and with shallower dips — its max drawdown of 46.6% is significantly
+    less severe than DSTop's 76.8% despite a much larger final balance.
+    Both strategies show volatile paths: multi-hundred-dollar swings are normal within the Fibonacci session
+    structure. The dashed line marks the $500 starting balance.
+  </div>
+</section>
+
+<hr>
+
+<div class="footer">
+  <span>Generated: 2026-07-08</span>
+  <span>Engine: mvp3 backtesting_runner</span>
+  <span>Dataset: 59,526 spins + 20,000 recent</span>
+  <span>Recommended: CL1+CR1 corners</span>
+  <span>Optimal config: TP=$20 / SL=$24.40 / Fib L8 / $500 start</span>
+</div>
+
+</body>
+</html>

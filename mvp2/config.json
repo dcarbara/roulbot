@@ -1,0 +1,26 @@
+{
+  "game_url": "https://stake.com/casino/games/evolution-roulette-lobby",
+  "chrome_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "default_strategy": "S1",
+  "base_bet": 0.50,
+  "strategies": {
+    "S1": {
+      "name": "Aggressive",
+      "positions": ["col1_btn", "col3_btn", "1st12", "red", "ds1"],
+      "tp": 64,
+      "sl": 55
+    },
+    "S2": {
+      "name": "Moderate",
+      "positions": ["col1_btn", "1st12", "3rd12", "odd", "ds1"],
+      "tp": 64,
+      "sl": 119
+    },
+    "S3": {
+      "name": "Conservative",
+      "positions": ["red", "odd", "1-18", "19-36", "ds1", "ds25"],
+      "tp": 31,
+      "sl": 51
+    }
+  }
+}

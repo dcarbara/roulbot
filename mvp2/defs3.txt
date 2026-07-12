@@ -1,0 +1,261 @@
+75: def get_chip_breakdown(amount):
+85: def group_bet_types(bet_types):
+126:     def parse_hybrid_value(self, value_str, base_amount=0.0):
+145:     def __init__(self, root: ctk.CTk):
+308:     def _get_allowed_tabs(self, tier: str) -> list:
+319:     def _apply_tab_lock_overlays(self, allowed: list):
+347:     def _unlock_tabs(self, new_allowed: list):
+354:     def _apply_tier_change(self, new_tier: str):
+381:     def _start_license_heartbeat(self):
+386:         def _loop():
+410:     def _update_free_guide(self):
+420:     def _update_expiry_banner(self):
+467:     def _refresh_tier_badges(self):
+477:     def _on_auth_complete(self):
+484:         def _fetch_and_show():
+521:     def _run_setup_wizard(self):
+528:     def _on_wizard_complete(self, preset_data):
+552:     def _finalize_init(self):
+569:     def load_advanced_strategies(self):
+586:     def get_all_strategy_names(self):
+602:     def highlight_selected_window(self):
+609:     def refresh_encrypted_strategies(self):
+692:     def refresh_encrypted_strategies_ui(self):
+698:     def apply_preset_gui(self):
+720:     def save_bundle(self):
+771:     def save_rotation_list_preset(self):
+804:     def refresh_rotation_presets_dropdown(self):
+840:     def load_rotation_list_from_dropdown(self, choice):
+865:     def load_rotation_list_preset(self):
+870:     def load_bundle(self):
+928:     def save_current_as_preset(self):
+961:     def import_config(self):
+1018:     def export_public_config(self):
+1049:     def browse_tesseract_path(self):
+1059:     def save_tesseract_path(self):
+1074:     def init_variables(self):
+1098:     def select_navigation_tab(self, tab_name):
+1114:     def create_menu_bar(self):
+1129:     def create_widgets(self):
+1249:         def get_frame(parent_panel, tab_name):
+1340:         def create_dash_kpi(parent, col, icon, title, default_val, accent_color, attr_name):
+1522:         def _plan_stat(col, icon, label, attr):
+1735:         def create_kpi(parent, title, var_name, col, color="#E6C200"):
+1797:         def create_stat_row(parent, label_text, var_attr_name, row):
+2786:         def _sub_row(parent, row, label, value, value_color="#e4e4e7"):
+3069:     def refresh_dashboard_bundles(self):
+3129:     def import_bundle_to_dashboard(self):
+3192:     def remove_selected_bundle(self):
+3225:     def open_shop(self):
+3232:     def on_dashboard_bundle_select(self, choice):
+3336:     def start_dashboard_session(self):
+3404:     def _update_dashboard_after_start(self):
+3427:     def _edit_risk_balance(self):
+3445:         def _apply():
+3476:     def update_risk_profile_preview(self, *args):
+3532:     def _risk_hud_highlight(self, active_name: str):
+3543:     def _runtime_switch_risk(self, profile_name: str):
+3604:     def cycle_tab(self, direction=1):
+3627:     def on_mousewheel(self, event):
+3644:     def on_mousewheel_scroll(self, event, widget):
+3662:     def prev_tab(self):
+3674:     def next_tab(self):
+3686:     def test_balance_ocr(self):
+3710:     def test_table_state_ocr(self):
+3734:     def record_region(self):
+3749:     def record_coordinate(self):
+3764:     def update_required_region_status(self, label):
+3772:     def on_timing_changed(self, event=None):
+3779:     def _calculate_sessions_from_runtime(self):
+3834:     def _refresh_dash_plan_summary(self):
+3870:     def update_stats_display(self, **kwargs):
+4009:     def log_to_dashboard(self, message):
+4023:     def populate_session_history(self):
+4093:     def update_bankroll_graph(self):
+4130:     def confirm_clear_stats(self):
+4141:     def refresh_aggregate_stats(self):
+4170:     def refresh_winning_numbers_tab(self):
+4255:     def reset_session_stats(self):
+4270:     def calculate_win_rate(self):
+4277:     def update_label_selector(self):
+4294:     def update_strategy_dropdown(self):
+4299:     def refresh_custom_strategies(self):
+4318:     def save_coordinate(self, label, *args):
+4354:     def update_coordinate_display(self):
+4359:     def update_strategy_list_display(self):
+4391:     def add_label_to_strategy(self):
+4448:     def select_window_dialog(self):
+4525:         def on_select():
+4534:         def on_cancel():
+4604:     def simple_input(self, prompt, title):
+4637:             def on_ok():
+4641:             def on_cancel():
+4651:             def _poll_telegram():
+4675:     def show_remote_error(self, title, message):
+4681:     def show_remote_info_blocking(self, title, message):
+4706:     def ask_hybrid_confirmation(self, title, prompt):
+4734:         def on_yes():
+4738:         def on_no():
+4770:     def start_telegram_bot(self):
+4792:     def save_telegram_config(self):
+4800:     def _update_session_label(self):
+4824:     def _refresh_license_status(self):
+4838:     def _logout_and_restart(self):
+4847:     def save_all_settings(self):
+4879:     def on_closing(self):
+4898:     def _show_upgrade_dialog(self, required_tier: str = "BASIC"):
+4970:     def start_bot(self):
+5156:     def run_multiple_sessions(self):
+5187:     def handle_remote_config(self, key, value, var_name):
+5221:     def update_runtime_limits(self):
+5252:     def should_end_session(self):
+5407:     def run_random_sessions(self, num_sessions):
+5512:     def run_scheduled_sessions(self, num_sessions):
+5627:     def toggle_pause_bot(self):
+5652:     def toggle_pause(self):
+5689:     def get_graph_png(self):
+5731:                 def sma(arr, window):
+5809:     def stop_bot(self):
+5833:     def _show_session_summary(self):
+5896:         def stat_cell(parent, row, col, label, value, value_color="white"):
+5922:     def start_auto_roulette(self):
+5955:     def stop_auto_roulette(self):
+5974:     def manual_refresh_overlay(self):
+6018:     def on_overlay_close(self):
+6023:     def toggle_hud(self):
+6039:     def update_hud_safe(self, **kwargs):
+6155:                 def safe_update_overlay():
+6163:     def update_hud_position(self):
+6173:     def run_auto_roulette(self):
+6211:                     def __init__(self, engine):
+6217:                     def record_result(self, win, last_number=None):
+6224:                     def get_next_bet(self):
+6231:                     def get_bet_labels(self):
+6235:                     def get_full_bets(self):
+6431:                         def is_winning_number(text):
+6441:                         def is_betting_related_state(text):
+6479:                              def show_safety_alert():
+6499:                     def is_betting_state(text):
+6506:                     def is_bets_accepted_state(text):
+6511:                     def is_next_game_state(text):
+6680:     def debug_add_number_to_strategy(self):
+6708:     def calculate_chip_clicks(self, amount):
+6715:     def parse_hybrid_value(self, value_str, base_amount=0.0):
+6734:     def run_bot(self):
+6940:                     def get_live_val(var_name, config_key):
+7582:     def winning_number_watcher(self):
+7593:         def _set_ocr_status(is_active):
+7613:                     def fuzzy_place_your_bets(text):
+7682:     def get_latest_winning_number(self):
+7724:     def reset_session_timestamp(self):
+7742:     def run_simulation(self):
+7790:     def cleanup_debug_screens(self):
+7799:     def clear_log(self):
+7804:     def stop_simulation(self):
+7809:     def log_simulation(self, message):
+7813:     def handle_table_reset(self):
+7831:     def refresh_history_listbox(self):
+7839:     def on_progression_changed(self, event=None):
+7861:     def add_dynamic_rule(self):
+7905:         def update_step_visibility(*args):
+7910:         def on_action_change(event=None):
+7936:         def on_ok():
+7961:         def on_cancel():
+7977:     def remove_dynamic_rule(self):
+7985:     def refresh_dynamic_rules_listbox(self):
+8001:     def view_dynamic_rules_dialog(self, rules_var):
+8046:         def clear_rules():
+8056:     def get_progression_params(self):
+8071:     def request_new_bet_type(self):
+8077:     def open_bet_type_dialog(self):
+8099:         def populate_listbox(filter_text=""):
+8121:         def on_search(*_):
+8128:         def on_ok():
+8139:         def on_cancel():
+8146:         def on_double_click(event):
+8156:     def add_custom_region(self):
+8199:     def update_coord_list_display(self):
+8221:             def make_highlight(label=label):
+8222:                 def on_enter(_):
+8243:     def delete_coordinate(self, label):
+8255:     def edit_coordinate(self, label, is_region):
+8284:         def on_ok():
+8311:         def on_cancel():
+8319:     def set_status(self, msg):
+8322:     def log_message(self, msg, tag=None):
+8420:     def filter_activity_log(self, *args):
+8431:     def clear_activity_log(self):
+8438:     def save_activity_log_to_file(self):
+8447:     def update_strategy_preview(self):
+8556:     def import_strategies(self):
+8579:     def export_strategies(self):
+8592:     def update_strategy(self):
+8628:     def delete_strategy(self):
+8666:     def clear_all_strategies(self):
+8699:     def toggle_custom_bet_units(self):
+8714:     def update_bet_unit_entries(self):
+8757:     def get_custom_bet_units(self):
+8784:     def on_label_selection_change(self, event=None):
+8812:     def filter_label_selector(self, event=None):
+8848:     def clear_label_search(self):
+8860:     def clear_all_label_selections(self):
+8876:     def delete_selected_label(self):
+8908:     def on_strategy_selected(self, event=None):
+8912:     def toggle_preview_size(self):
+8927:     def toggle_units_editing(self):
+8939:     def populate_units_editor(self):
+8997:     def update_amount_display(self, label):
+9009:     def save_strategy_units(self):
+9052:     def cancel_units_editing(self):
+9056:     def update_strategy_selector(self):
+9066:     def initialize_strategy_rotation(self):
+9158:     def get_next_rotation_strategy(self):
+9241:     def apply_rotation_strategy(self):
+9390:     def add_rotation_strategy_dialog(self):
+9415:         def configure_scroll_region(event):
+9546:         def on_global_stop_conditions_change(event=None):
+9603:         def update_global_dalembert_visibility(*args):
+9616:         def on_progression_change(event=None):
+9683:         def on_key_press(event):
+9693:         def on_listbox_select(event):
+9828:         def add_strategy():
+9902:         def update_strategy():
+9973:         def remove_strategy():
+9990:         def move_up():
+10015:         def move_down():
+10040:         def clear_all():
+10054:         def on_mousewheel(event):
+10057:         def on_shift_mousewheel(event):
+10068:     def update_rotation_listbox(self):
+10112:     def add_dynamic_rule_dialog(self, rules_var):
+10174:         def update_step_visibility(*args):
+10179:         def on_action_change(event=None):
+10206:         def add_rule():
+10249:         def cancel():
+10260:     def toggle_dark_mode(self):
+10273:     def handle_remote_config(self, config_key, value, var_name=None):
+10316:     def undo_last_coord_action(self):
+10327:     def clear_all_coordinates(self):
+10340:     def filter_log(self):
+10349:     def export_log(self):
+10365:     def create_kpi_card(self, parent, col, title, initial_value, color, attr_name):
+10377:     def format_time(self, seconds):
+10386:     def init_advanced_strategy_tab(self, parent_frame):
+10496:     def adv_add_variable(self):
+10527:     def adv_remove_variable(self):
+10541:     def adv_add_rule(self):
+10576:     def adv_remove_rule(self):
+10584:     def adv_update_preview(self):
+10595:     def adv_save_strategy(self):
+10622:     def adv_load_strategy(self):
+10659:     def __init__(self, widget, text):
+10665:     def show_tip(self, event=None):
+10680:     def hide_tip(self, event=None):
+10686:     def init_advanced_strategy_tab(self, parent_frame):
+10796:     def adv_add_variable(self):
+10827:     def adv_remove_variable(self):
+10841:     def adv_add_rule(self):
+10876:     def adv_remove_rule(self):
+10884:     def adv_update_preview(self):
+10895:     def adv_save_strategy(self):
+10922:     def adv_load_strategy(self):

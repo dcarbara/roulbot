@@ -1,0 +1,179 @@
+{
+  "state": "PLACED",
+  "strategy": "CORNER_DOZEN1",
+  "positions": [
+    "cr_1_2_4_5",
+    "cr_2_3_5_6",
+    "cr_5_6_8_9",
+    "cr_8_9_11_12"
+  ],
+  "balance": 599.25,
+  "initial_balance": 586.45,
+  "net": 12.8,
+  "tp": 30.0,
+  "sl": 45.0,
+  "cum_sl": 250.0,
+  "base_bet": 0.1,
+  "rounds": 18,
+  "wins": 4,
+  "losses": 14,
+  "win_streak": 0,
+  "loss_streak": 3,
+  "best_win": 2,
+  "best_loss": 6,
+  "last_number": 28,
+  "last_color": "black",
+  "last_pnl": -0.8,
+  "tp_count": 0,
+  "sl_count": 1,
+  "fib_idx": 3,
+  "fib_mult": 3,
+  "fib_bet": 0.3,
+  "history": [
+    {
+      "round": 1,
+      "number": 17,
+      "won": false,
+      "pnl": -0.4,
+      "color": "black",
+      "balance": 586.05
+    },
+    {
+      "round": 2,
+      "number": 15,
+      "won": false,
+      "pnl": -0.4,
+      "color": "black",
+      "balance": 585.65
+    },
+    {
+      "round": 3,
+      "number": 24,
+      "won": false,
+      "pnl": -0.8,
+      "color": "black",
+      "balance": 584.85
+    },
+    {
+      "round": 4,
+      "number": 9,
+      "won": true,
+      "pnl": 4.2,
+      "color": "red",
+      "balance": 589.05
+    },
+    {
+      "round": 5,
+      "number": 18,
+      "won": false,
+      "pnl": -0.4,
+      "color": "red",
+      "balance": 588.65
+    },
+    {
+      "round": 6,
+      "number": 16,
+      "won": false,
+      "pnl": -0.4,
+      "color": "red",
+      "balance": 588.25
+    },
+    {
+      "round": 7,
+      "number": 32,
+      "won": false,
+      "pnl": -0.8,
+      "color": "red",
+      "balance": 587.45
+    },
+    {
+      "round": 8,
+      "number": 36,
+      "won": false,
+      "pnl": -1.2,
+      "color": "red",
+      "balance": 586.25
+    },
+    {
+      "round": 9,
+      "number": 19,
+      "won": false,
+      "pnl": -2.0,
+      "color": "red",
+      "balance": 584.25
+    },
+    {
+      "round": 10,
+      "number": 22,
+      "won": false,
+      "pnl": -3.2,
+      "color": "black",
+      "balance": 581.05
+    },
+    {
+      "round": 11,
+      "number": 9,
+      "won": true,
+      "pnl": 18.2,
+      "color": "red",
+      "balance": 599.25
+    },
+    {
+      "round": 12,
+      "number": 7,
+      "won": false,
+      "pnl": -0.4,
+      "color": "red",
+      "balance": 598.85
+    },
+    {
+      "round": 13,
+      "number": 17,
+      "won": false,
+      "pnl": -0.4,
+      "color": "black",
+      "balance": 598.45
+    },
+    {
+      "round": 14,
+      "number": 4,
+      "won": true,
+      "pnl": 1.0,
+      "color": "black",
+      "balance": 599.45
+    },
+    {
+      "round": 15,
+      "number": 8,
+      "won": true,
+      "pnl": 1.4,
+      "color": "black",
+      "balance": 600.85
+    },
+    {
+      "round": 16,
+      "number": 35,
+      "won": false,
+      "pnl": -0.4,
+      "color": "black",
+      "balance": 600.45
+    },
+    {
+      "round": 17,
+      "number": 18,
+      "won": false,
+      "pnl": -0.4,
+      "color": "red",
+      "balance": 600.05
+    },
+    {
+      "round": 18,
+      "number": 28,
+      "won": false,
+      "pnl": -0.8,
+      "color": "black",
+      "balance": 599.25
+    }
+  ],
+  "timestamp": "18:28:47"
+}

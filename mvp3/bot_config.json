@@ -1,0 +1,14 @@
+{
+  "strategy": "CORNER_DOZEN1",
+  "base_bet": 0.1,
+  "tp": 30.0,
+  "sl": 45.0,
+  "max_sessions": 50,
+  "cum_sl": 250.0,
+  "dynamic_base": false,
+  "safe_bankroll": 1000.0,
+  "book_pct": 0.2,
+  "book_mult": 1.2,
+  "auto_base": false,
+  "auto_base_per_unit": 250.0
+}

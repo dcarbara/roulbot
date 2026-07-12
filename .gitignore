@@ -1,0 +1,90 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+env/
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
+
+# Playwright browser binaries & cache
+playwright/.cache/
+.playwright/
+
+# Mac / Linux / Windows system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE settings
+.vscode/
+.idea/
+
+# User-specific configs (if any)
+config/config.json
+
+# Test screenshots or captured images
+*.png
+*.jpg
+*.jpeg
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# __future__ expansion: Add compiled OCR models, etc., if needed
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+env/
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
+
+# Playwright browser binaries & cache
+playwright/.cache/
+.playwright/
+
+# Mac / Linux / Windows system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE settings
+.vscode/
+.idea/
+
+# User-specific configs (if any)
+config/config.json
+
+# Test screenshots or captured images
+*.png
+*.jpg
+*.jpeg
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# __future__ expansion: Add compiled OCR models, etc., if needed
+

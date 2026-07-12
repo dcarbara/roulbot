@@ -1,0 +1,5 @@
+{
+    "name": "wager bundle",
+    "strategies_string": "11strt1:dynamic|rules=loss:martingale|condition=profit_below_session_high,11strt2:dynamic|rules=loss:martingale|condition=profit_below_session_high,11strt3:dynamic|rules=loss:martingale|condition=profit_below_session_high",
+    "created_at": "2026-01-25T18:02:35.233098"
+}
