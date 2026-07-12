@@ -88,3 +88,5 @@ config/config.json
 
 # __future__ expansion: Add compiled OCR models, etc., if needed
 
+
+mvp2/winning_numbers.db
