@@ -90,3 +90,5 @@ config/config.json
 
 
 mvp2/winning_numbers.db
+
+venv/
